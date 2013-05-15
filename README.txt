@@ -1,0 +1,6 @@
+An OpenGL playground environment which I'll use to try new things, learn new techniques, create small projects etc..
+
+I'm using the following libraries:
+SOIL - http://www.lonesock.net/soil.html
+GLFW - http://www.glfw.org/
+GLEW - http://glew.sourceforge.net/
