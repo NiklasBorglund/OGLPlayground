@@ -22,35 +22,6 @@ struct VertexPosTex
 	Vector2 _texCoord;
 };
 
-const VertexPosTex vertexDataCubeColorless[] = 
-{
-	VertexPosTex(Vector3(-1.0f, -1.0f, -1.0f), Vector2(0.0f,0.0f)),
-	VertexPosTex(Vector3(-1.0f, -1.0f,  1.0f), Vector2(1.0f,0.0f)),
-	VertexPosTex(Vector3(-1.0f,  1.0f, -1.0f), Vector2(0.0f,1.0f)),
-	VertexPosTex(Vector3(-1.0f,  1.0f,  1.0f), Vector2(0.0f,1.0f)),
-	VertexPosTex(Vector3( 1.0f, -1.0f, -1.0f), Vector2(1.0f,0.0f)),
-	VertexPosTex(Vector3( 1.0f, -1.0f,  1.0f), Vector2(1.0f,0.0f)),
-	VertexPosTex(Vector3( 1.0f,  1.0f, -1.0f), Vector2(1.0f,1.0f)),
-	VertexPosTex(Vector3( 1.0f,  1.0f,  1.0f), Vector2(1.0f,1.0f)),
-};
-
-
-const unsigned int indices[] =
-{
-			0,2,1, // -x
-			1,2,3,
-			4,5,6, // +x
-			5,7,6,
-			0,1,5, // -y
-			0,5,4,
-			2,6,7, // +y
-			2,7,3,
-			0,4,6, // -z
-			0,6,2,
-			1,3,7, // +z
-			1,7,5,
-};
-
 class GameManager
 {
 public:
@@ -63,6 +34,7 @@ public:
 	//Takes the ownership of the object 
 	void AddGameObject(GameObject* gameObject);
 
+	ResourceManager* GetResourceManager();
 private:
 	GLFWWindow _thisWindow;
 	GLuint _vertexArrayObject;
@@ -70,9 +42,6 @@ private:
 	std::vector<Component*> _defaultUpdateStep;
 	std::vector<Component*> _renderingUpdateStep;
 
-	//Temp Objects (need their own managers)
-	std::unique_ptr<Material> _thisMaterial;
-	std::unique_ptr<Mesh> _thisMesh;
 	//weak pointer to the main camera component
 	Camera* _mainCameraComponent;
 

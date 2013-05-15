@@ -108,9 +108,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Engine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="RotateObject.h">
-      <Filter>Header Files\Engine\Components</Filter>
-    </ClInclude>
     <ClInclude Include="GameManager.h">
       <Filter>Header Files\Engine\GameLoop</Filter>
     </ClInclude>

@@ -4,14 +4,10 @@
 
 //Temp
 #include "FileUtility.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
 #include "Vector2.h"
 #include "Camera.h"
 #include "Diffuse.h"
 #include "MeshRenderer.h"
-#include "RotateObject.h"
-#include "Texture2D.h"
 #include "Color.h"
 
 GameManager::GameManager(): _thisWindow(OpenGLVersion::OpenGL4_3(), GLFWOpenGLProfile::CoreProfile()){}
@@ -42,34 +38,6 @@ void GameManager::Initialize()
 	//Initialize the renderer
 	_renderEngine.Initialize();
 	_renderEngine.SetClearColor(Color::CornflowerBlue());
-
-	//TEMP VARIABLES(These will be eventually moved out and handled differently)
-	VertexBuffer* vertexBuffer = new VertexBuffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(),sizeof(VertexPosTex), sizeof(vertexDataCubeColorless) / sizeof(VertexPosTex), (GLvoid*)vertexDataCubeColorless);
-	vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), 0);
-	vertexBuffer->AddVertexAttributeInformation(1,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), sizeof(Vector3));
-	IndexBuffer* indexBuffer = new IndexBuffer( sizeof(float), sizeof(indices) / sizeof(float),GLIndexDataType::UnsignedInt(), (GLvoid*)indices);
-
-	//The mesh takes over the ownership of the buffers
-	_thisMesh = std::unique_ptr<Mesh>(new Mesh(vertexBuffer, indexBuffer));
-	
-	_thisMaterial = std::unique_ptr<Material>(new Diffuse(_resourceManager.GetShaderProgram("Diffuse", "../data/Diffuse.vert", "../data/Diffuse.frag"),
-														  _resourceManager.GetTexture2D("../data/test.bmp")));
-	_thisMaterial->Initialize();
-
-
-	//ADD RANDOM OBJECTS
-	for(int x = -2; x < 2; x++)
-	{
-		for(int y = -2; y < 2; y++)
-		{
-			GameObject* cubeObject = new GameObject();
-			cubeObject->GetTransform().SetScale(0.5f,0.5f,0.5f);
-			cubeObject->GetTransform().SetPosition((float)x * 1.5f,(float)y * 1.5f,0);
-			cubeObject->AddComponent(new RotateObject(cubeObject));
-			cubeObject->AddComponent(new MeshRenderer(cubeObject,_thisMesh.get(), _thisMaterial.get()));
-			AddGameObject(cubeObject);
-		}
-	}
 }
 
 void GameManager::Update()
@@ -125,4 +93,9 @@ void GameManager::AddGameObject(GameObject* gameObject)
 			currentComponent = NULL;
 		}
 	}
+}
+
+ResourceManager* GameManager::GetResourceManager()
+{
+	return &_resourceManager;
 }

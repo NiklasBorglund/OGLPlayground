@@ -120,7 +120,6 @@
     <ClInclude Include="OpenGLVersion.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="RotateObject.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SOIL.h" />
     <ClInclude Include="Texture2D.h" />
