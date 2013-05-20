@@ -162,6 +162,12 @@
     <ClInclude Include="GLFWWindow.h">
       <Filter>Header Files\Engine\Window</Filter>
     </ClInclude>
+    <ClInclude Include="Primitive.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexDeclarations.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">

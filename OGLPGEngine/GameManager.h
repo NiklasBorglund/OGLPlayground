@@ -10,17 +10,11 @@
 //Temp
 #include "Material.h"
 #include "Mesh.h"
-#include "Vector2.h"
 #include "Texture2D.h"
+#include "Vector2.h"
 #include "ResourceManager.h"
 #include "RenderEngine.h"
 
-struct VertexPosTex
-{
-	VertexPosTex(Vector3 position, Vector2 texCoord):_position(position), _texCoord(texCoord){}
-	Vector3 _position;
-	Vector2 _texCoord;
-};
 
 class GameManager
 {

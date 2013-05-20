@@ -118,6 +118,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="OpenGLVersion.h" />
+    <ClInclude Include="Primitive.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderProgram.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexDeclarations.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
