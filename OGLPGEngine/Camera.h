@@ -5,6 +5,7 @@
 
 #include "Component.h"
 #include "Matrix4x4.h"
+#include "Vector2.h"
 
 class Camera: public Component
 {
@@ -28,6 +29,7 @@ public:
 	void SetFarClip(float farClip);
 	void SetFOVY(float fovy);
 	void SetAspectRatio(float aspectRatio);
+	void SetAspectRatio(const Vector2& windowSize);
 	void SetLookAt(const Vector3& lookAt);
 	void SetUpVector(const Vector3& up);
 

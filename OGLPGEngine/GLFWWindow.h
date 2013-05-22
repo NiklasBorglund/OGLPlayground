@@ -27,6 +27,8 @@ class Vector2;
 class GLFWWindow
 {
 public:
+	static bool DidWindowResize;
+
 	GLFWWindow(OpenGLVersion desiredMinimumVersion, GLFWOpenGLProfile oglProfile);
 	~GLFWWindow();
 

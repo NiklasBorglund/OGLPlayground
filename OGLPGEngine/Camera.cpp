@@ -51,6 +51,10 @@ void Camera::SetAspectRatio(float aspectRatio)
 	this->_aspectRatio = aspectRatio;
 	this->_isChanged = true;
 }
+void Camera::SetAspectRatio(const Vector2& windowSize)
+{
+	SetAspectRatio(windowSize._x / windowSize._y);
+}
 void Camera::SetLookAt(const Vector3& lookAt)
 {
 	this->_lookAt = lookAt;

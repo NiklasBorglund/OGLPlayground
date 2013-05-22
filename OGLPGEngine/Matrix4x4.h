@@ -6,6 +6,7 @@
 
 #include <math.h>
 #include <string>
+#include "Quaternion.h"
 #include "Vector3.h"
 
 class Matrix4x4
@@ -135,6 +136,23 @@ public:
 			_31 = X._z;		_32 = Y._z;		_33 = Z._z;				_34 = 0.0f;
 			_41 = -Vector3::Dot(X, position);		_42 = -Vector3::Dot(Y, position);		_43 = -Vector3::Dot(Z, position);	_44 = 1.0f;
 		}
+		void SetFromQuaternion(const Quaternion& quaternion)
+		{
+			float XX = quaternion._x * quaternion._x;
+			float XY = quaternion._x * quaternion._y;
+			float XZ = quaternion._x * quaternion._z;
+			float XW = quaternion._x * quaternion._w;
+			float YY = quaternion._y * quaternion._y;
+			float YZ = quaternion._y * quaternion._z;
+			float YW = quaternion._y * quaternion._w;
+			float ZZ = quaternion._z * quaternion._z;
+			float ZW = quaternion._z * quaternion._w;
+
+			_11 = 1 - 2 * (YY + ZZ); _12 = 2 * (XY + ZW);		_13 = 2 * (XZ - YW);	 _14 = 0.0f;
+			_21 = 2 * (XY - ZW);	 _22 = 1 - 2 * (XX + ZZ);	_23 = 2 * (YZ + XW);	 _24 = 0.0f;
+			_31 = 2 * (XZ + YW);	 _32 = 2 * (YZ - XW);		_33 = 1 - 2 * (XX + YY); _34 = 0.0f;
+			_41 = 0.0f;				 _42 = 0.0f;				_43 = 0.0f;				 _44 = 1.0f;
+		}
 		void Transpose()
 		{
 			float temp = _12;
@@ -240,6 +258,23 @@ public:
 										 X._y,						 Y._y,						 Z._y,			 0.0f,
 										 X._z,						 Y._z,						 Z._z,			 0.0f,
 							 -Vector3::Dot(X, position), -Vector3::Dot(Y, position), -Vector3::Dot(Z, position), 1.0f);
+		}
+		static Matrix4x4 CreateFromQuaternion(const Quaternion &quaternion)
+		{
+			float XX = quaternion._x * quaternion._x;
+			float XY = quaternion._x * quaternion._y;
+			float XZ = quaternion._x * quaternion._z;
+			float XW = quaternion._x * quaternion._w;
+			float YY = quaternion._y * quaternion._y;
+			float YZ = quaternion._y * quaternion._z;
+			float YW = quaternion._y * quaternion._w;
+			float ZZ = quaternion._z * quaternion._z;
+			float ZW = quaternion._z * quaternion._w;
+
+			return Matrix4x4(1 - 2 * (YY + ZZ), 2 * (XY + ZW),	   2 * (XZ - YW),	  0.0f,
+							 2 * (XY - ZW),		1 - 2 * (XX + ZZ), 2 * (YZ + XW),	  0.0f,
+							 2 * (XZ + YW),		2 * (YZ - XW),	   1 - 2 * (XX + YY), 0.0f,
+							 0.0f,				0.0f,			   0.0f,			  1.0f);
 		}
 		static Matrix4x4 Identity()										{ return Matrix4x4(1.0f, 0.0f, 0.0f, 0.0f,
 					 			 			 			 			 			 		   0.0f, 1.0f, 0.0f, 0.0f,

@@ -10,33 +10,25 @@
 #include "MeshRenderer.h"
 #include "Color.h"
 
-GameManager::GameManager(): _thisWindow(OpenGLVersion::OpenGL4_3(), GLFWOpenGLProfile::CoreProfile()){}
+GameManager::GameManager(){}
 GameManager::~GameManager()
 {
-	_renderingUpdateStep.clear();
 	_defaultUpdateStep.clear();
 	_gameObjects.clear();
 }
 
 void GameManager::Initialize()
 {
-	if(!_thisWindow.IsInitialized() ||
-		!_thisWindow.OpenWindowAndInitalizeGLEW(1280,720,8,8,8,8,24,8,false))
-	{
-		//FAILURE
-	}
 
 	//Create the main camera object
-	Vector2 windowSize = _thisWindow.GetWindowSize();
 	GameObject* mainCamera = new GameObject();
 	mainCamera->GetTransform().SetPosition(0,2,-5);
-	_mainCameraComponent = (Camera*)mainCamera->AddComponent(new Camera(mainCamera));
-	_mainCameraComponent->SetAspectRatio((windowSize._x / windowSize._y));
+	Camera* cameraComponent = (Camera*)mainCamera->AddComponent(new Camera(mainCamera));
 
 	AddGameObject(mainCamera); //Takes over the ownership of the game object
 
 	//Initialize the renderer
-	_renderEngine.Initialize();
+	_renderEngine.Initialize(cameraComponent);
 	_renderEngine.SetClearColor(Color::CornflowerBlue());
 }
 
@@ -46,30 +38,25 @@ void GameManager::Update()
 	while(running)
 	{
 		//Clear the screen
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		_renderEngine.ClearBuffers();
 
 		for(unsigned int i = 0; i < _defaultUpdateStep.size(); i++)
 		{
 			_defaultUpdateStep[i]->Update();
 		}
 
-		for(unsigned int i = 0; i < _renderingUpdateStep.size(); i++)
-		{
-			MeshRenderer* currentComponent = static_cast<MeshRenderer*>(_renderingUpdateStep[i]);
-			currentComponent->PreDraw(_mainCameraComponent);
-			currentComponent->Update();//Draw
-			currentComponent->PostDraw();
-		}
+		//Render the objects
+		_renderEngine.Update();
 
 		//Swap the render buffers
-		_thisWindow.SwapBuffers();
+		_renderEngine.SwapBuffers();
 
-		running = !glfwGetKey( GLFW_KEY_ESC ) && _thisWindow.IsWindowOpen();
+		running = !glfwGetKey( GLFW_KEY_ESC ) && _renderEngine.GetWindow().IsWindowOpen();
 	}
 }
 void GameManager::Shutdown()
 {
-
+	_renderEngine.Shutdown();
 }
 void GameManager::AddGameObject(GameObject* gameObject)
 {
@@ -88,9 +75,8 @@ void GameManager::AddGameObject(GameObject* gameObject)
 			}
 			else if(currentComponent->GetUpdateStep() == UPDATE_RENDER)
 			{
-				_renderingUpdateStep.push_back(currentComponent);
+				_renderEngine.AddRenderingComponent(currentComponent);
 			}
-			currentComponent = NULL;
 		}
 	}
 }

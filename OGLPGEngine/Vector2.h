@@ -21,7 +21,7 @@ public:
 	explicit Vector2(float value): _x(value), _y(value){}
 	Vector2(): _x(0.0f), _y(0.0f){}
 
-	float AbsSquare()const
+	float SquaredLength()const
 	{
 		return (_x * _x + _y * _y);
 	}

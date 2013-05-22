@@ -119,6 +119,7 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="OpenGLVersion.h" />
     <ClInclude Include="Primitive.h" />
+    <ClInclude Include="Quaternion.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderProgram.h" />

@@ -5,20 +5,34 @@
 #define GLEW_STATIC
 #include <GL\glew.h>
 
+#include "GLFWWindow.h"
+#include <vector>
+
 class Color;
+class Component;
+class Camera;
 class RenderEngine
 {
 public:
 	RenderEngine();
 	~RenderEngine();
 
-	void Initialize();
+	void Initialize(Camera* cameraComponent);
 	void Update();
 	void Shutdown();
 	void SetClearColor(const Color& color);
+	void ClearBuffers();
+	void SwapBuffers();
 
+	void AddRenderingComponent(Component* component);
+
+	const GLFWWindow& GetWindow()const;
 private:
+	GLFWWindow _thisWindow;
 	GLuint _vertexArrayObject;
+	std::vector<Component*> _renderingUpdateStep;
+
+	Camera* _mainCameraComponent; 	//weak pointer to the main camera component
 };
 
 #endif //RENDERENGINE_H_INCLUDED

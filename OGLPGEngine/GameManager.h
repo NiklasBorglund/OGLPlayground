@@ -4,7 +4,6 @@
 
 #include <vector>
 #include <memory>
-#include "GLFWWindow.h"
 #include "GameObject.h"
 
 //Temp
@@ -30,14 +29,9 @@ public:
 
 	ResourceManager* GetResourceManager();
 private:
-	GLFWWindow _thisWindow;
 	GLuint _vertexArrayObject;
 	std::vector<std::unique_ptr<GameObject>> _gameObjects;
 	std::vector<Component*> _defaultUpdateStep;
-	std::vector<Component*> _renderingUpdateStep;
-
-	//weak pointer to the main camera component
-	Camera* _mainCameraComponent;
 
 	RenderEngine _renderEngine;
 	ResourceManager _resourceManager;

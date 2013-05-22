@@ -4,6 +4,7 @@
 
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "Quaternion.h"
 
 class Transform
 {
@@ -11,18 +12,27 @@ public:
 	Transform();
 	~Transform();
 
-	const Vector3& GetScale()const;
-	const Vector3& GetRotation()const;
-	const Vector3& GetPosition()const;
+	const Vector3& GetScale();
+	const Vector3 GetRotationEuler()const;
+	const Vector3& GetPosition();
 	const Matrix4x4& GetWorldMatrix();
 	void SetScale(float x, float y, float z);
-	void SetRotation(float x, float y, float z);
+	void SetRotationEuler(float x, float y, float z);
+	void SetRotationEuler(const Vector3& eulerAngles);
+	void SetRotation(const Quaternion& rotation);
 	void SetPosition(float x, float y, float z);
+	void SetPosition(const Vector3& position);
+	
+	void Rotate(const Vector3& axis, const float angleInRadians);
 private:
-	Vector3 _scale;
-	Vector3 _rotation; //Todo:: Research and implement Quaternion
-	Vector3 _position;
+	Matrix4x4 _scaleMatrix;
+	Matrix4x4 _positionMatrix;
+	Matrix4x4 _rotationMatrix;
 	Matrix4x4 _worldMatrix;
+	Quaternion _rotation; 
+	Vector3 _positionVector;
+	Vector3 _scaleVector;
+
 	bool _didChange;
 };
 #endif //TRANSFORM_H_INCLUDED

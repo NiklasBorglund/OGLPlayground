@@ -107,8 +107,8 @@ public:
 	static Vector3 Down()										{ return Vector3(0.0f, -1.0f, 0.0f); }
 	static Vector3 Right()										{ return Vector3(1.0f, 0.0f, 0.0f); }
 	static Vector3 Left()										{ return Vector3(-1.0f, 0.0f, 0.0f); }
-	static Vector3 Backward()									{ return Vector3(0.0f, 0.0f, 1.0f); }
-	static Vector3 Forward()									{ return Vector3(0.0f, 0.0f, -1.0f); }
+	static Vector3 Backward()									{ return Vector3(0.0f, 0.0f, -1.0f); }
+	static Vector3 Forward()									{ return Vector3(0.0f, 0.0f, 1.0f); }
 	static Vector3 Zero()										{ return Vector3(0.0f, 0.0f, 0.0f); }
 	static Vector3 One()										{ return Vector3(1.0f, 1.0f, 1.0f); }
 	static Vector3 UnitX()										{ return Vector3(1.0f, 0.0f, 0.0f); }

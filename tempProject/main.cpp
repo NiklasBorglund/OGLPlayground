@@ -1,13 +1,9 @@
 //main.cpp
 
 #include "GameManager.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "Mesh.h"
 #include "Diffuse.h"
 #include "RotateObject.h"
 #include "MeshRenderer.h"
-#include "VertexDeclarations.h"
 #include <memory>
 
 

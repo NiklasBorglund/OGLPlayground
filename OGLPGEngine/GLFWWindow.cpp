@@ -4,6 +4,8 @@
 #include "Vector2.h"
 #include <iostream>
 
+bool GLFWWindow::DidWindowResize = false;
+
 GLFWWindow::GLFWWindow(OpenGLVersion desiredMinimumVersion, GLFWOpenGLProfile oglProfile): 
 	_isInitialized(false), _windowWidth(0), _windowHeight(0)
 {
@@ -133,6 +135,10 @@ const Vector2 GLFWWindow::GetWindowSize() const
 {
 	int width, height = 0;
 	glfwGetWindowSize(&width,&height);
+
+	//Set the static resize variable to false
+	GLFWWindow::DidWindowResize = false;
+
 	return Vector2((float)width, (float)height);
 }
 void GLFWWindow::SetSwapInterval(int swapInterval)
@@ -177,4 +183,6 @@ void GLFWCALL GLFWWindow::OnWindowResize(int width, int height)
 {
 	//Set the glviewPort
 	glViewport(0,0,(GLsizei)width, (GLsizei)height);
+
+	GLFWWindow::DidWindowResize = true;
 }
