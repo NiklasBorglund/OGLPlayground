@@ -12,11 +12,11 @@ class FileUtility : private Uncopyable
 public:
 	static inline const char* const LocalFileDirectory()
 	{
-		return "data\\";
+		return "data/";
 	}
 	static inline const char* const GlobalFileDirectory()
 	{
-		return "..\\data\\";
+		return "../data/";
 	}
 
 	static std::string ReadContentsFromFile(const char* filePath)
@@ -41,6 +41,12 @@ public:
 	static std::string ReadFileFromDataFolder(std::string fileName)
 	{
 		return ReadContentsFromFile((std::string)LocalFileDirectory() + fileName);
+	}
+	static std::string GetFileNameFromPath(std::string filePath)
+	{
+		std::string fileName = filePath.substr(filePath.find_last_of("\\") + 1 );
+		fileName = fileName.substr(fileName.find_last_of("/") + 1 );
+		return fileName;
 	}
 
 private:

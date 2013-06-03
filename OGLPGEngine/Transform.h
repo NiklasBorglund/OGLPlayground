@@ -22,6 +22,7 @@ public:
 	void SetRotation(const Quaternion& rotation);
 	void SetPosition(float x, float y, float z);
 	void SetPosition(const Vector3& position);
+	void SetParent(Transform* parent);
 	
 	void Rotate(const Vector3& axis, const float angleInRadians);
 private:
@@ -32,7 +33,7 @@ private:
 	Quaternion _rotation; 
 	Vector3 _positionVector;
 	Vector3 _scaleVector;
-
+	Transform* _parent;
 	bool _didChange;
 };
 #endif //TRANSFORM_H_INCLUDED

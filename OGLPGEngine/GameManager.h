@@ -26,6 +26,10 @@ public:
 	void Shutdown();
 	//Takes the ownership of the object 
 	void AddGameObject(GameObject* gameObject);
+	//TODO::find a nicer way to solve this
+	void AddComponentToGameObject(GameObject* object, Component* componentToAdd);
+
+	GameObject* CreateGameObjectsFromModel(std::string filePath);
 
 	ResourceManager* GetResourceManager();
 private:
@@ -35,6 +39,9 @@ private:
 
 	RenderEngine _renderEngine;
 	ResourceManager _resourceManager;
+
+	//Registers the component to the update loop
+	void RegisterComponent(Component* componentToRegister);
 };
 
 #endif //GAMEMANAGER_H_INCLUDED

@@ -67,21 +67,74 @@ void GameManager::AddGameObject(GameObject* gameObject)
 		const std::vector<Component*>& componentList = gameObject->GetComponents();
 		for(unsigned int i = 0; i < componentList.size(); i++)
 		{
-			Component* currentComponent = componentList[i];
-			if(currentComponent->GetUpdateStep() == UPDATE_DEFAULT)
-			{
-				//Add a weak pointer to the update step
-				_defaultUpdateStep.push_back(currentComponent);
-			}
-			else if(currentComponent->GetUpdateStep() == UPDATE_RENDER)
-			{
-				_renderEngine.AddRenderingComponent(currentComponent);
-			}
+			RegisterComponent(componentList[i]);
 		}
 	}
+}
+void GameManager::AddComponentToGameObject(GameObject* object, Component* componentToAdd)
+{
+	if(object != NULL && componentToAdd != NULL)
+	{
+		object->AddComponent(componentToAdd);
+		RegisterComponent(componentToAdd);
+	}
+}
+GameObject* GameManager::CreateGameObjectsFromModel(std::string filePath)
+{
+	std::vector<Mesh*> model = _resourceManager.GetModelFromFile(filePath);
+
+	//Create all the necessary materials
+	for(unsigned int i = 0; i < model.size(); i++)
+	{
+		std::string texturePath = FileUtility::LocalFileDirectory() + model[i]->GetDefaultDiffuseTextureName();
+		if(!_resourceManager.CheckIfMaterialExist(texturePath))
+		{
+			_resourceManager.StoreAndInitMaterial(texturePath, 
+			new Diffuse(_resourceManager.GetShaderProgram("Diffuse", "../data/Diffuse.vert", "../data/Diffuse.frag"),
+			_resourceManager.GetTexture2D(texturePath)));
+		}
+	}
+
+	GameObject* previousMesh = NULL;
+	GameObject* rootObject = NULL;
+	for(unsigned int i = 0; i < model.size(); i++)
+	{
+		GameObject* meshObject = new GameObject();
+
+		//Correct the transforms
+		if(previousMesh != NULL)
+		{
+			meshObject->GetTransform().SetParent(&previousMesh->GetTransform());
+		}
+		else
+		{
+			rootObject = meshObject;
+		}
+
+		std::string texturePath = FileUtility::LocalFileDirectory() + model[i]->GetDefaultDiffuseTextureName();
+		meshObject->AddComponent(new MeshRenderer(meshObject, model[i], _resourceManager.GetMaterial(texturePath)));
+
+		AddGameObject(meshObject);
+		previousMesh = meshObject;
+	}
+
+	return rootObject;
 }
 
 ResourceManager* GameManager::GetResourceManager()
 {
 	return &_resourceManager;
+}
+
+void GameManager::RegisterComponent(Component* componentToRegister)
+{
+	if(componentToRegister->GetUpdateStep() == UPDATE_DEFAULT)
+	{
+		//Add a weak pointer to the update step
+		_defaultUpdateStep.push_back(componentToRegister);
+	}
+	else if(componentToRegister->GetUpdateStep() == UPDATE_RENDER)
+	{
+		_renderEngine.AddRenderingComponent(componentToRegister);
+	}
 }

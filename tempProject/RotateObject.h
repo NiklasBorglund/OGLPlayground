@@ -13,8 +13,8 @@ public:
 	virtual void Update()
 	{
 		GetGameObject()->GetTransform().Rotate(Vector3::Up(), _rotation);
-		GetGameObject()->GetTransform().Rotate(Vector3::Right(), _rotation);
-		GetGameObject()->GetTransform().Rotate(Vector3::Forward(), _rotation);
+		//GetGameObject()->GetTransform().Rotate(Vector3::Right(), _rotation);
+		//GetGameObject()->GetTransform().Rotate(Vector3::Forward(), _rotation);
 	}
 
 private:

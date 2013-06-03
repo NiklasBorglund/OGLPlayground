@@ -24,11 +24,15 @@ private:
 class IndexBuffer: public Buffer
 {
 public:
+	/* using this will require you to delete the bufferdata yourself */
 	IndexBuffer(unsigned int elementSize, unsigned int numberOfElements, GLIndexDataType indexType, GLvoid* bufferData);
+
+	IndexBuffer(unsigned int numberOfElements, GLushort* indices);
 	virtual ~IndexBuffer();
 
 	const GLenum GetIndexType() const;
 private:
 	GLenum _indexType;
+	GLushort* _indices;
 };
 #endif //INDEXBUFFER_H_INCLUDED

@@ -24,12 +24,18 @@ const Vector3& Transform::GetPosition()
 }
 const Matrix4x4& Transform::GetWorldMatrix()
 {
-	if(this->_didChange)
+	if(this->_didChange || _parent != NULL)
 	{
 		_rotationMatrix.SetFromQuaternion(_rotation);
 		_worldMatrix = _scaleMatrix;
 		_worldMatrix *= _rotationMatrix;
 		_worldMatrix *= _positionMatrix;
+
+		if(_parent != NULL)
+		{
+			_worldMatrix = _parent->GetWorldMatrix() * _worldMatrix;
+		}
+
 		this->_didChange = false;
 	}
 	return this->_worldMatrix;
@@ -66,6 +72,11 @@ void Transform::SetPosition(float x, float y, float z)
 void Transform::SetPosition(const Vector3& position)
 {
 	SetPosition(position._x, position._y, position._z);
+}
+void Transform::SetParent(Transform* parent)
+{
+	this->_parent = parent;
+	this->_didChange;
 }
 void Transform::Rotate(const Vector3& axis, const float angleInRadians)
 {

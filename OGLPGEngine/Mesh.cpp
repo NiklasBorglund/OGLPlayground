@@ -7,6 +7,15 @@ Mesh::Mesh(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer): _vertexBuffer(
 {}
 Mesh::~Mesh(){}
 
+std::string Mesh::GetDefaultDiffuseTextureName()const
+{
+	return _defaultDiffuseTextureName;
+}
+void Mesh::SetDefaultDiffuseTextureName(std::string defaultDiffuseTextureName)
+{
+	_defaultDiffuseTextureName = defaultDiffuseTextureName;
+}
+
 IndexBuffer* Mesh::GetIndexBuffer()
 {
 	return _indexBuffer.get();

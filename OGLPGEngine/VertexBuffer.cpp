@@ -1,5 +1,6 @@
 //VertexBuffer.cpp
 #include "VertexBuffer.h"
+#include "VertexDeclarations.h"
 
 //VertexAttrributeInformation
 VertexAttributeInformation::VertexAttributeInformation(GLuint index, GLint size, GLenum type, GLboolean normalized, unsigned int stride, unsigned int offset):
@@ -16,8 +17,22 @@ GLvoid* VertexAttributeInformation::GetOffset() const{return (GLvoid*)this->offs
 //VertexBuffer
 VertexBuffer::VertexBuffer(BufferType bufferType, BufferUsage bufferUsage,unsigned int elementSize, unsigned int numberOfElements, GLvoid* bufferData): 
 		Buffer(bufferType, bufferUsage, elementSize, numberOfElements, bufferData)
-{}
-VertexBuffer::~VertexBuffer(){}
+{
+	_vertices = NULL;
+}
+VertexBuffer::VertexBuffer(unsigned int numberOfElements, VertexPosNormTex* vertices):
+	Buffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(), sizeof(VertexPosNormTex), numberOfElements, (GLvoid*)vertices),
+	_vertices(vertices)
+{
+
+}
+VertexBuffer::~VertexBuffer()
+{
+	if(_vertices != NULL)
+	{
+		delete [] _vertices;
+	}
+}
 
 void VertexBuffer::AddVertexAttributeInformation(GLuint index, GLint size, GLenum type, GLboolean normalized,unsigned int stride, unsigned int offset)
 {

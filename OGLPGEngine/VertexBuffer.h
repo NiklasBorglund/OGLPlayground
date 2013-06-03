@@ -28,11 +28,14 @@ private:
 	unsigned int offset;
 };
 
-
+struct VertexPosNormTex; //TODO:: come up with a better solution for this
 class VertexBuffer: public Buffer
 {
 public:
+	/* using this will require you to delete the bufferdata yourself */
 	VertexBuffer(BufferType bufferType, BufferUsage bufferUsage,unsigned int elementSize, unsigned int numberOfElements, GLvoid* bufferData);
+
+	VertexBuffer(unsigned int numberOfElements, VertexPosNormTex* vertices);
 	virtual ~VertexBuffer();
 
 	void AddVertexAttributeInformation(GLuint index, GLint size, GLenum type, GLboolean normalized,unsigned int stride, unsigned int offset);
@@ -40,5 +43,6 @@ public:
 	int GetNumberOfAttributeInfos()const;
 private:
 	std::vector<VertexAttributeInformation> _vertexAttributeInfo;
+	VertexPosNormTex* _vertices;
 };
 #endif //VERTEXBUFFER_H_INCLUDED

@@ -7,16 +7,17 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
-const VertexPosTex vertexDataCubeColorless[] = 
+//Just random texcoords and normals for now
+const VertexPosNormTex vertexDataCubeColorless[] = 
 {
-	VertexPosTex(Vector3(-1.0f, -1.0f, -1.0f), Vector2(0.0f,0.0f)),
-	VertexPosTex(Vector3(-1.0f, -1.0f,  1.0f), Vector2(1.0f,0.0f)),
-	VertexPosTex(Vector3(-1.0f,  1.0f, -1.0f), Vector2(0.0f,1.0f)),
-	VertexPosTex(Vector3(-1.0f,  1.0f,  1.0f), Vector2(0.0f,1.0f)),
-	VertexPosTex(Vector3( 1.0f, -1.0f, -1.0f), Vector2(1.0f,0.0f)),
-	VertexPosTex(Vector3( 1.0f, -1.0f,  1.0f), Vector2(1.0f,0.0f)),
-	VertexPosTex(Vector3( 1.0f,  1.0f, -1.0f), Vector2(1.0f,1.0f)),
-	VertexPosTex(Vector3( 1.0f,  1.0f,  1.0f), Vector2(1.0f,1.0f)),
+	VertexPosNormTex(Vector3(-1.0f, -1.0f, -1.0f),Vector3(-1.0f, -1.0f, -1.0f), Vector2(0.0f,0.0f)),
+	VertexPosNormTex(Vector3(-1.0f, -1.0f,  1.0f),Vector3(-1.0f, -1.0f, -1.0f), Vector2(1.0f,0.0f)),
+	VertexPosNormTex(Vector3(-1.0f,  1.0f, -1.0f),Vector3(-1.0f, -1.0f, -1.0f), Vector2(0.0f,1.0f)),
+	VertexPosNormTex(Vector3(-1.0f,  1.0f,  1.0f),Vector3(-1.0f, -1.0f, -1.0f), Vector2(0.0f,1.0f)),
+	VertexPosNormTex(Vector3( 1.0f, -1.0f, -1.0f),Vector3(-1.0f, -1.0f, -1.0f), Vector2(1.0f,0.0f)),
+	VertexPosNormTex(Vector3( 1.0f, -1.0f,  1.0f),Vector3(-1.0f, -1.0f, -1.0f), Vector2(1.0f,0.0f)),
+	VertexPosNormTex(Vector3( 1.0f,  1.0f, -1.0f),Vector3(-1.0f, -1.0f, -1.0f), Vector2(1.0f,1.0f)),
+	VertexPosNormTex(Vector3( 1.0f,  1.0f,  1.0f),Vector3(-1.0f, -1.0f, -1.0f),Vector2(1.0f,1.0f)),
 };
 
 
@@ -41,9 +42,10 @@ class Primitive
 public:
 	static Mesh* CreateCube()
 	{
-		VertexBuffer* vertexBuffer = new VertexBuffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(),sizeof(VertexPosTex), sizeof(vertexDataCubeColorless) / sizeof(VertexPosTex), (GLvoid*)vertexDataCubeColorless);
-		vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), 0);
-		vertexBuffer->AddVertexAttributeInformation(1,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), sizeof(Vector3));
+		VertexBuffer* vertexBuffer = new VertexBuffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(),sizeof(VertexPosNormTex), sizeof(vertexDataCubeColorless) / sizeof(VertexPosNormTex), (GLvoid*)vertexDataCubeColorless);
+		vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), 0);
+		vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3));
+		vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3) * 2);
 		IndexBuffer* indexBuffer = new IndexBuffer( sizeof(float), sizeof(indices) / sizeof(float),GLIndexDataType::UnsignedInt(), (GLvoid*)indices);
 
 		//The mesh takes over the ownership of the buffers

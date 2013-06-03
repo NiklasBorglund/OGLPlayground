@@ -1,5 +1,5 @@
 //Uncopyable.h
-//Inherit form this to make your object uncopyable
+//Inherit from this to make your object uncopyable
 #ifndef UNCOPYABLE_H_INCLUDED
 #define UNCOPYABLE_H_INCLUDED
 class Uncopyable
