@@ -15,7 +15,8 @@ class Diffuse: public Material
 {
 public:
 	Diffuse(ShaderProgram* shaderProgram, Texture2D* diffuseTexture): Material(shaderProgram),
-		_isStarted(false), _worldMatrixID(0), _viewMatrixID(0), _projectionMatrixID(0), _diffuseTextureID(0), _diffuseTexture(diffuseTexture)
+		_isStarted(false), _worldMatrixID(0), _viewMatrixID(0), _projectionMatrixID(0), _diffuseTextureID(0),_lightDirectionID(0),
+		_diffuseTexture(diffuseTexture)
 	{}
 	virtual ~Diffuse(){}
 
@@ -25,6 +26,7 @@ public:
 		_worldMatrixID = glGetUniformLocation(program->GetProgram(), "worldMatrix");
 		_viewMatrixID = glGetUniformLocation(program->GetProgram(), "viewMatrix");
 		_projectionMatrixID = glGetUniformLocation(program->GetProgram(), "projectionMatrix");
+		_lightDirectionID = glGetUniformLocation(program->GetProgram(), "lightDirection");
 		_diffuseTextureID = glGetUniformLocation(program->GetProgram(), "diffuseTexture");
 	}
 	virtual void Start()
@@ -33,6 +35,11 @@ public:
 		{
 			glUseProgram(GetShaderProgram()->GetProgram());
 			_isStarted = true;
+
+			//Lights - Hardcoded for now
+			_lightDirection._y = -1.0f;
+			_lightDirection._z = 0.3f;
+			_lightDirection.Normalize();
 		}
 	}
 	virtual void SetUniforms(Camera* thisCamera)
@@ -41,6 +48,8 @@ public:
 		{
 			glUniformMatrix4fv(_viewMatrixID,1 , GL_FALSE, thisCamera->GetViewMatrix().Pointer());
 			glUniformMatrix4fv(_projectionMatrixID,1 , GL_FALSE, thisCamera->GetProjectionMatrix().Pointer());
+
+			glUniform3fv(_lightDirectionID, 1, _lightDirection.Pointer());
 
 			//Texture
 			glActiveTexture( GL_TEXTURE0 );
@@ -70,6 +79,8 @@ private:
 	GLuint _viewMatrixID;
 	GLuint _projectionMatrixID;
 	GLuint _diffuseTextureID;
+	GLuint _lightDirectionID;
 	Texture2D* _diffuseTexture;
+	Vector3 _lightDirection; 
 };
 #endif //DIFFUSE_H_INCLUDED

@@ -3,7 +3,8 @@
 
 Transform::Transform(): _scaleMatrix(Matrix4x4::Identity()), _positionMatrix(Matrix4x4::Identity()),
 						_rotationMatrix(Matrix4x4::Identity()),_worldMatrix(Matrix4x4::Identity()),
-						_rotation(Quaternion::Identity()), _positionVector(0.0f),_scaleVector(0.0f), _didChange(false)
+						_rotation(Quaternion::Identity()), _positionVector(0.0f),_scaleVector(0.0f),
+						_up(0.0f), _right(0.0f), _forward(0.0f), _didChange(false)
 {}
 Transform::~Transform(){}
 
@@ -24,21 +25,32 @@ const Vector3& Transform::GetPosition()
 }
 const Matrix4x4& Transform::GetWorldMatrix()
 {
-	if(this->_didChange || _parent != NULL)
-	{
-		_rotationMatrix.SetFromQuaternion(_rotation);
-		_worldMatrix = _scaleMatrix;
-		_worldMatrix *= _rotationMatrix;
-		_worldMatrix *= _positionMatrix;
-
-		if(_parent != NULL)
-		{
-			_worldMatrix = _parent->GetWorldMatrix() * _worldMatrix;
-		}
-
-		this->_didChange = false;
-	}
+	CalculateWorldMatrix();
 	return this->_worldMatrix;
+}
+const Vector3& Transform::GetForward()
+{
+	CalculateWorldMatrix();
+	_forward._x = _worldMatrix._31;
+	_forward._y = _worldMatrix._32;
+	_forward._z = _worldMatrix._33;
+	return _forward;
+}
+const Vector3& Transform::GetRight()
+{
+	CalculateWorldMatrix();
+	_right._x = _worldMatrix._11;
+	_right._y = _worldMatrix._12;
+	_right._z = _worldMatrix._13;
+	return _right;
+}
+const Vector3& Transform::GetUp()
+{
+	CalculateWorldMatrix();
+	_up._x = _worldMatrix._21;
+	_up._y = _worldMatrix._22;
+	_up._z = _worldMatrix._23;
+	return _up;
 }
 void Transform::SetScale(float x, float y, float z)
 {
@@ -82,4 +94,21 @@ void Transform::Rotate(const Vector3& axis, const float angleInRadians)
 {
 	_rotation = Quaternion::CreateFromAxisAngle(axis,angleInRadians) * _rotation;
 	this->_didChange = true;
+}
+void Transform::CalculateWorldMatrix()
+{
+	if(this->_didChange || _parent != NULL)
+	{
+		_rotationMatrix.SetFromQuaternion(_rotation);
+		_worldMatrix = _scaleMatrix;
+		_worldMatrix *= _rotationMatrix;
+		_worldMatrix *= _positionMatrix;
+
+		if(_parent != NULL)
+		{
+			_worldMatrix = _parent->GetWorldMatrix() * _worldMatrix;
+		}
+
+		this->_didChange = false;
+	}
 }

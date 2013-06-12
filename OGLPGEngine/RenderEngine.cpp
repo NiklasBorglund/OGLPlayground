@@ -6,6 +6,7 @@
 #include "MeshRenderer.h"
 #include "Vector2.h"
 #include "OpenGLVersion.h"
+#include "GameTime.h"
 
 RenderEngine::RenderEngine(): _thisWindow(OpenGLVersion::OpenGL4_3(), GLFWOpenGLProfile::CoreProfile()), _vertexArrayObject(0)
 {
@@ -36,7 +37,14 @@ void RenderEngine::Initialize(Camera* cameraComponent)
 	glFrontFace(GL_CCW);
 	glEnable(GL_DEPTH_TEST);
 }
-void RenderEngine::Update()
+void RenderEngine::Start()
+{
+	for(unsigned int i = 0; i < _renderingUpdateStep.size(); i++)
+	{
+		_renderingUpdateStep[i]->Start();
+	}
+}
+void RenderEngine::Update(GameTime* gameTime)
 {
 	//Check if the window resized
 	if(_thisWindow.DidWindowResize)
@@ -49,7 +57,7 @@ void RenderEngine::Update()
 	{
 		MeshRenderer* currentComponent = static_cast<MeshRenderer*>(_renderingUpdateStep[i]);
 		currentComponent->PreDraw(_mainCameraComponent);
-		currentComponent->Update();//Draw
+		currentComponent->Update(gameTime);//Draw
 		currentComponent->PostDraw();
 	}
 }
@@ -80,4 +88,8 @@ void RenderEngine::AddRenderingComponent(Component* component)
 const GLFWWindow& RenderEngine::GetWindow()const
 {
 	return _thisWindow;
+}
+Camera* RenderEngine::GetCameraComponent()const
+{
+	return _mainCameraComponent;
 }

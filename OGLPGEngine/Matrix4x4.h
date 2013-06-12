@@ -276,6 +276,12 @@ public:
 							 2 * (XZ + YW),		2 * (YZ - XW),	   1 - 2 * (XX + YY), 0.0f,
 							 0.0f,				0.0f,			   0.0f,			  1.0f);
 		}
+		static Vector3 Transform(Vector3& position, Matrix4x4& matrix)
+		{
+			return Vector3((position._x * matrix._11) + (position._y * matrix._21) + (position._z * matrix._31) + matrix._41,
+						   (position._x * matrix._12) + (position._y * matrix._22) + (position._z * matrix._32) + matrix._42,
+						   (position._x * matrix._13) + (position._y * matrix._23) + (position._z * matrix._33) + matrix._43);
+		} 
 		static Matrix4x4 Identity()										{ return Matrix4x4(1.0f, 0.0f, 0.0f, 0.0f,
 					 			 			 			 			 			 		   0.0f, 1.0f, 0.0f, 0.0f,
 					 			 			 			 			 					   0.0f, 0.0f, 1.0f, 0.0f,

@@ -20,7 +20,7 @@ public:
 	virtual ~MeshRenderer();
 
 	void PreDraw(Camera* currentCameraComponent);
-	virtual void Update(); //<---Draw
+	virtual void Update(GameTime* gameTime); //<---Draw
 	void PostDraw();
 
 private:

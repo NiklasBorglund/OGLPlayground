@@ -6,7 +6,9 @@
 #include <GL\glew.h>
 
 #include <string>
+#include <vector>
 
+#include "Color.h"
 class Texture2D
 {
 public:
@@ -19,6 +21,7 @@ public:
 	int GetWidth()const;
 	int GetHeight()const;
 	int GetChannels()const;
+	std::vector<Color> GetImageData();
 
 private:
 	GLuint _texture;

@@ -11,6 +11,7 @@
 class Color;
 class Component;
 class Camera;
+class GameTime;
 class RenderEngine
 {
 public:
@@ -18,13 +19,15 @@ public:
 	~RenderEngine();
 
 	void Initialize(Camera* cameraComponent);
-	void Update();
+	void Start(); //will be run just before the first update
+	void Update(GameTime* gameTime);
 	void Shutdown();
 	void SetClearColor(const Color& color);
 	void ClearBuffers();
 	void SwapBuffers();
 
 	void AddRenderingComponent(Component* component);
+    Camera* GetCameraComponent()const;
 
 	const GLFWWindow& GetWindow()const;
 private:

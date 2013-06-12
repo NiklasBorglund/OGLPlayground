@@ -5,6 +5,8 @@
 #include "RotateObject.h"
 #include "MeshRenderer.h"
 #include "FileUtility.h"
+#include "TerrainHeightMap.h"
+#include "FreeLookCamera.h"
 #include <string>
 #include <memory>
 
@@ -19,7 +21,7 @@ int main()
 	ResourceManager* resourceManager = newManager.GetResourceManager();
 
 	//Create a new Material to use for the cubes
-	
+	/*
 	resourceManager->StoreAndInitMaterial("cubeMaterial", 
 										new Diffuse(resourceManager->GetShaderProgram("Diffuse", "../data/Diffuse.vert", "../data/Diffuse.frag"),
 										resourceManager->GetTexture2D("../data/test.bmp")));
@@ -38,12 +40,13 @@ int main()
 			newManager.AddGameObject(cubeObject);
 		}
 	}
-	
+	*/
 
-	/*
+	
 	//Loads the meshes from the model file into a
 	//simple gameobject hierarchy and returns the root game object
 	//Returns null if the model wasn't found
+	/*
 	GameObject* dwarfObject = newManager.CreateGameObjectsFromModel("data/dwarf2.b3d");
 	if(dwarfObject != NULL)
 	{
@@ -64,9 +67,27 @@ int main()
 	{
 		dwarfObject2->GetTransform().SetScale(0.05f,0.05f,0.05f);
 		dwarfObject2->GetTransform().SetPosition(3.0f,0.0f,0.0f);
-		newManager.AddComponentToGameObject(dwarfObject, new RotateObject(dwarfObject2));
+		newManager.AddComponentToGameObject(dwarfObject2, new RotateObject(dwarfObject2));
 	}
 	*/
+	
+	
+
+	resourceManager->StoreAndInitMaterial("terrainMaterial", 
+										new Diffuse(resourceManager->GetShaderProgram("Diffuse", "../data/Diffuse.vert", "../data/Diffuse.frag"),
+										resourceManager->GetTexture2D("../data/test.bmp")));
+	TerrainHeightMap newTerrain;
+	resourceManager->AddMesh("Terrain", newTerrain.CreateHeightMap(resourceManager->GetTexture2D("data/heightmap.bmp")));
+	GameObject* terrainObject = new GameObject();
+	//terrainObject->AddComponent(new RotateObject(terrainObject));
+	//terrainObject->GetTransform().SetScale(0.1f,0.1f,0.1f);
+	terrainObject->GetTransform().SetPosition(0.0f,0.0f,0.0f);
+	terrainObject->AddComponent(new MeshRenderer(terrainObject,resourceManager->GetMesh("Terrain"), resourceManager->GetMaterial("terrainMaterial")));
+	newManager.AddGameObject(terrainObject);
+
+	//Add a movement script to the camera
+	GameObject* cameraObject = newManager.GetMainCameraObject();
+	newManager.AddComponentToGameObject(cameraObject, new FreeLookCamera(cameraObject));
 
 	newManager.Update();
 	newManager.Shutdown();

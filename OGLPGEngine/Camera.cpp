@@ -11,7 +11,7 @@ Camera::~Camera()
 {
 
 }
-void Camera::Update()
+void Camera::Update(GameTime* gameTime)
 {
 	if(this->_isChanged)
 	{

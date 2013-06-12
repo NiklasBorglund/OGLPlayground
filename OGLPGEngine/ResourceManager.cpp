@@ -127,7 +127,7 @@ std::vector<Mesh*> ResourceManager::GetModelFromFile(std::string filePath)
 					}
 					if(currentMesh->HasNormals())
 					{
-						vertexArray[j]._normal = Vector3(currentMesh->mNormals[j].x, currentMesh->mNormals[j].y, currentMesh->mNormals[j].z);
+						vertexArray[j]._normal = -Vector3(currentMesh->mNormals[j].x, currentMesh->mNormals[j].y, currentMesh->mNormals[j].z);
 					}
 					if(currentMesh->HasTextureCoords(0))
 					{
@@ -201,8 +201,11 @@ Material* ResourceManager::GetMaterial(std::string name)
 	}
 	return NULL;
 }
+void ResourceManager::AddMesh(std::string meshName, Mesh* mesh)
+{
+	_meshes.insert(std::pair<std::string, std::unique_ptr<Mesh>>(meshName, std::unique_ptr<Mesh>(mesh)));
+}
 
-//Private methods
 Mesh* ResourceManager::GetMesh(std::string name)
 {
 	std::map<std::string, std::unique_ptr<Mesh>>::iterator it = _meshes.find(name);

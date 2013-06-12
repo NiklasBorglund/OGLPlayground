@@ -26,5 +26,8 @@
     <ClInclude Include="RotateObject.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="FreeLookCamera.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

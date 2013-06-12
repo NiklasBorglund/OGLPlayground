@@ -3,6 +3,7 @@
 #define COMPONENT_H_INCLUDED
 
 #include <memory>
+#include "GameTime.h"
 
 enum UpdateStep
 {
@@ -33,7 +34,7 @@ public:
 	virtual ~Component();
 
 	virtual void Start();
-	virtual void Update();
+	virtual void Update(GameTime* gametime);
 	virtual void Shutdown();
 
 	GameObject* GetGameObject()const;

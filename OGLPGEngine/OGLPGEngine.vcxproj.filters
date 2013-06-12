@@ -79,6 +79,21 @@
     <Filter Include="Header Files\Engine\Window">
       <UniqueIdentifier>{371e0b34-3a00-4c24-9f2c-878991117509}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Rendering\Terrain">
+      <UniqueIdentifier>{5f5d0814-fcca-4586-8938-a1ad827ed7cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Rendering\Terrain">
+      <UniqueIdentifier>{6e673fcd-56af-4840-b974-5063ea1a6850}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Input">
+      <UniqueIdentifier>{1ed17701-01f0-4f2c-aee0-5d577e417e0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Time">
+      <UniqueIdentifier>{287e2981-6e77-47e5-ba7d-ac98e50b05b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Time">
+      <UniqueIdentifier>{2ff71249-615e-453e-a53d-7efb671015b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h">
@@ -171,6 +186,15 @@
     <ClInclude Include="Quaternion.h">
       <Filter>Header Files\Base</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainHeightMap.h">
+      <Filter>Header Files\Engine\Rendering\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTime.h">
+      <Filter>Header Files\Engine\Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -220,6 +244,12 @@
     </ClCompile>
     <ClCompile Include="ShaderProgram.cpp">
       <Filter>Source Files\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainHeightMap.cpp">
+      <Filter>Source Files\Engine\Rendering\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTime.cpp">
+      <Filter>Source Files\Engine\Time</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

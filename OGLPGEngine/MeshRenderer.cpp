@@ -16,7 +16,7 @@ void MeshRenderer::PreDraw(Camera* currentCameraComponent)
 	_material->SetUniforms(currentCameraComponent);
 }
 
-void MeshRenderer::Update()
+void MeshRenderer::Update(GameTime* gameTime)
 {
 	if(_mesh != NULL)
 	{

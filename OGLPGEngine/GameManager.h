@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include "GameObject.h"
+#include "GameTime.h"
 
 //Temp
 #include "Material.h"
@@ -32,6 +33,7 @@ public:
 	GameObject* CreateGameObjectsFromModel(std::string filePath);
 
 	ResourceManager* GetResourceManager();
+	GameObject* GetMainCameraObject()const;
 private:
 	GLuint _vertexArrayObject;
 	std::vector<std::unique_ptr<GameObject>> _gameObjects;
@@ -39,6 +41,8 @@ private:
 
 	RenderEngine _renderEngine;
 	ResourceManager _resourceManager;
+
+	GameTime _gameTime;
 
 	//Registers the component to the update loop
 	void RegisterComponent(Component* componentToRegister);

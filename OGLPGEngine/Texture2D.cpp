@@ -69,3 +69,22 @@ int Texture2D::GetChannels()const
 {
 	return _channels;
 }
+std::vector<Color> Texture2D::GetImageData()
+{
+	std::vector<Color> imageData;
+	GLuint* image = new GLuint[_width * _height];
+	glBindTexture(GL_TEXTURE_2D, _texture);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, (GLvoid*)image);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	for(int i = 0; i < (_width * _height); i++)
+	{
+		GLuint value = image[i];
+		GLubyte r = (value & 0xFF000000) >> 24;
+		GLubyte g = (value & 0x00FF0000) >> 16;
+		GLubyte b = (value & 0x0000FF00) >> 8;
+		GLubyte a = (value & 0x000000FF);
+		imageData.push_back(Color(r,g,b,a));
+	}
+	delete [] image;
+	return imageData;
+}

@@ -19,6 +19,13 @@ public:
 	Color(float r, float g, float b, float a):_r(r), _g(g), _b(b), _a(a){}
 	explicit Color(float value): _r(value), _g(value), _b(value), _a(value) {}
 	Color(): _r(0), _g(0), _b(0), _a(0){}
+	Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+	{
+		_r = (r / 255.0f);
+		_g = (g / 255.0f);
+		_b = (b / 255.0f);
+		_a = (a / 255.0f);
+	}
 	~Color(){}
 
 	static Color Black()										{ return Color(0.0f, 0.0f, 0.0f, 1.0f); }

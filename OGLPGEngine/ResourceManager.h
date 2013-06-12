@@ -32,6 +32,8 @@ public:
 	void StoreAndInitMaterial(std::string name, Material* _material);
 	bool CheckIfMaterialExist(std::string name);
 	Material* GetMaterial(std::string name);
+	void AddMesh(std::string meshName, Mesh* mesh);
+	Mesh* GetMesh(std::string name);
 
 private:
 	std::map<std::string, std::unique_ptr<Texture2D>> _textures;
@@ -39,7 +41,5 @@ private:
 	std::map<std::string, std::unique_ptr<Mesh>> _meshes;
 	std::map<std::string, std::unique_ptr<Material>> _materials;
 	std::map<std::string, std::vector<Mesh*>> _models;
-
-	Mesh* GetMesh(std::string name);
 };
 #endif //RESOURCEMANAGER_H_INCLUDED

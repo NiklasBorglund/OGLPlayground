@@ -34,22 +34,35 @@ void GameManager::Initialize()
 
 void GameManager::Update()
 {
+	//Run all the start
+	for(unsigned int i = 0; i < _defaultUpdateStep.size(); i++)
+	{
+			_defaultUpdateStep[i]->Start();
+	}
+	_renderEngine.Start();
+
 	int running = GL_TRUE;
 	while(running)
 	{
+		_gameTime.StartFrame();
+
 		//Clear the screen
 		_renderEngine.ClearBuffers();
 
 		for(unsigned int i = 0; i < _defaultUpdateStep.size(); i++)
 		{
-			_defaultUpdateStep[i]->Update();
+			_defaultUpdateStep[i]->Update(&_gameTime);
 		}
 
 		//Render the objects
-		_renderEngine.Update();
+		_renderEngine.Update(&_gameTime);
 
 		//Swap the render buffers
 		_renderEngine.SwapBuffers();
+
+		_gameTime.EndFrame();
+		//std::cout << "FPS:" << _gameTime.GetFPS() << std::endl;
+		//std::cout << "FrameCounts:" << _gameTime.GetFrameCount() << std::endl;
 
 		running = !glfwGetKey( GLFW_KEY_ESC ) && _renderEngine.GetWindow().IsWindowOpen();
 	}
@@ -124,6 +137,10 @@ GameObject* GameManager::CreateGameObjectsFromModel(std::string filePath)
 ResourceManager* GameManager::GetResourceManager()
 {
 	return &_resourceManager;
+}
+GameObject* GameManager::GetMainCameraObject()const
+{
+	return _renderEngine.GetCameraComponent()->GetGameObject();
 }
 
 void GameManager::RegisterComponent(Component* componentToRegister)

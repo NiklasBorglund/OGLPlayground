@@ -13,7 +13,7 @@ public:
 	Camera(GameObject* owner);
 	virtual ~Camera();
 
-	virtual void Update();
+	virtual void Update(GameTime* gameTime);
 
 	const Matrix4x4& GetProjectionMatrix()const;
 	const Matrix4x4& GetViewMatrix()const;
@@ -32,7 +32,6 @@ public:
 	void SetAspectRatio(const Vector2& windowSize);
 	void SetLookAt(const Vector3& lookAt);
 	void SetUpVector(const Vector3& up);
-
 private:
 	Matrix4x4 _projectionMatrix;
 	Matrix4x4 _viewMatrix;
