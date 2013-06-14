@@ -31,6 +31,7 @@ public:
 	void AddComponentToGameObject(GameObject* object, Component* componentToAdd);
 
 	GameObject* CreateGameObjectsFromModel(std::string filePath);
+	GameObject* CreateGameObjectsFromMeshes(const std::vector<Mesh*>& meshes);
 
 	ResourceManager* GetResourceManager();
 	GameObject* GetMainCameraObject()const;

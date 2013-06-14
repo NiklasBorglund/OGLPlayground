@@ -21,6 +21,13 @@ public:
 	explicit Vector3(float value): _x(value), _y(value), _z(value) {}
 	Vector3(): _x(0), _y(0), _z(0){}
 
+	void SetValues(float x, float y, float z)
+	{
+		_x = x;
+		_y = y;
+		_z = z;
+	}
+
 	float Length()
 	{
 		return sqrt(_x * _x + _y * _y + _z * _z);
@@ -38,7 +45,7 @@ public:
 			_y = 0.0f;
 			_z = 0.0f;
 		}
-		else
+		else	
 		{
 			_x /= length;
 			_y /= length;

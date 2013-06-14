@@ -41,5 +41,6 @@ private:
 	std::map<std::string, std::unique_ptr<Mesh>> _meshes;
 	std::map<std::string, std::unique_ptr<Material>> _materials;
 	std::map<std::string, std::vector<Mesh*>> _models;
+	std::map<std::string, std::vector<Mesh*>> _terrain;
 };
 #endif //RESOURCEMANAGER_H_INCLUDED

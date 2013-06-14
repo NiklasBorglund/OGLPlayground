@@ -136,7 +136,7 @@ std::vector<Mesh*> ResourceManager::GetModelFromFile(std::string filePath)
 				}
 
 				//Create the indexbuffer
-				GLushort* indices = new GLushort[currentMesh->mNumFaces * 3];
+				GLuint* indices = new GLuint[currentMesh->mNumFaces * 3];
 				int index = 0;
 				for(unsigned int j = 0; j < currentMesh->mNumFaces; j++)
 				{

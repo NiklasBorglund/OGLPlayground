@@ -88,3 +88,17 @@ std::vector<Color> Texture2D::GetImageData()
 	delete [] image;
 	return imageData;
 }
+std::vector<GLubyte> Texture2D::GetImageDataRedColor()
+{
+	std::vector<GLubyte> imageData;
+	GLuint* image = new GLuint[_width * _height];
+	glBindTexture(GL_TEXTURE_2D, _texture);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, (GLvoid*)image);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	for(int i = 0; i < (_width * _height); i++)
+	{
+		imageData.push_back(((image[i] & 0xFF000000) >> 24));
+	}
+	delete [] image;
+	return imageData;
+}

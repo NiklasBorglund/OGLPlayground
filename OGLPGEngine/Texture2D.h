@@ -22,6 +22,7 @@ public:
 	int GetHeight()const;
 	int GetChannels()const;
 	std::vector<Color> GetImageData();
+	std::vector<GLubyte> GetImageDataRedColor(); //Gets a list of all the red color values
 
 private:
 	GLuint _texture;

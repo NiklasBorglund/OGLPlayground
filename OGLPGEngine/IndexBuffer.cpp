@@ -6,9 +6,9 @@ IndexBuffer::IndexBuffer(unsigned int elementSize, unsigned int numberOfElements
 	Buffer(BufferType::ElementArrayBuffer(), BufferUsage::StaticDraw(), elementSize, numberOfElements, bufferData), _indexType(indexType.GetIndexDataType()), _indices(0)
 {
 }
-IndexBuffer::IndexBuffer(unsigned int numberOfElements, GLushort* indices): 
-	Buffer(BufferType::ElementArrayBuffer(), BufferUsage::StaticDraw(), sizeof(GLushort), numberOfElements, (GLvoid*)indices), 
-	_indexType(GLIndexDataType::UnsignedShort().GetIndexDataType()), _indices(indices)
+IndexBuffer::IndexBuffer(unsigned int numberOfElements, GLuint* indices): 
+	Buffer(BufferType::ElementArrayBuffer(), BufferUsage::StaticDraw(), sizeof(GLuint), numberOfElements, (GLvoid*)indices), 
+	_indexType(GLIndexDataType::UnsignedInt().GetIndexDataType()), _indices(indices)
 {
 
 }

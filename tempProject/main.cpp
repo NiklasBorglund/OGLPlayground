@@ -77,13 +77,16 @@ int main()
 										new Diffuse(resourceManager->GetShaderProgram("Diffuse", "../data/Diffuse.vert", "../data/Diffuse.frag"),
 										resourceManager->GetTexture2D("../data/test.bmp")));
 	TerrainHeightMap newTerrain;
-	resourceManager->AddMesh("Terrain", newTerrain.CreateHeightMap(resourceManager->GetTexture2D("data/heightmap.bmp")));
-	GameObject* terrainObject = new GameObject();
-	//terrainObject->AddComponent(new RotateObject(terrainObject));
-	//terrainObject->GetTransform().SetScale(0.1f,0.1f,0.1f);
-	terrainObject->GetTransform().SetPosition(0.0f,0.0f,0.0f);
-	terrainObject->AddComponent(new MeshRenderer(terrainObject,resourceManager->GetMesh("Terrain"), resourceManager->GetMaterial("terrainMaterial")));
-	newManager.AddGameObject(terrainObject);
+	newTerrain.CreateHeightMap(resourceManager->GetTexture2D("data/heightmap1.bmp"), 64);
+
+	//Test
+	int numberOfTerrainPatches = newTerrain.GetNumberOfPatches();
+	for(int i = 0; i < numberOfTerrainPatches; i++)
+	{
+		GameObject* terrainObject = new GameObject();
+		terrainObject->AddComponent(new MeshRenderer(terrainObject,newTerrain.GetTerrainMeshes()[i], resourceManager->GetMaterial("terrainMaterial")));
+		newManager.AddGameObject(terrainObject);
+	}
 
 	//Add a movement script to the camera
 	GameObject* cameraObject = newManager.GetMainCameraObject();
