@@ -121,6 +121,13 @@ public:
 			_31 = 0.0f;				_32 = 0.0f;				_33 = (1 / (zNear - zFar));		_34 = 0.0f;
 			_41 = 0.0f;				_42 = 0.0f;				_43 = (zNear / (zNear - zFar));	_44 = 1.0f;
 		}
+		void SetOrthographicMatrixOffCenterRH(float left, float right, float bottom, float top, float near, float far)
+		{
+			_11 = (2 / (right - left));				_12 = 0.0f;								_13 = 0.0f;						_14 = 0.0f;
+			_21 = 0.0f;								_22 = 2 / (top - bottom);				_23 = 0.0f;						_24 = 0.0f;
+			_31 = 0.0f;								_32 = 0.0f;								_33 = (1 / (near - far));		_34 = 0.0f;
+			_41 = (left + right) / (left - right);	_42 = (top + bottom) / (bottom - top);	_43 = (near / (near - far));	_44 = 1.0f;
+		}
 		void SetLookAtRH(const Vector3& position, const Vector3& lookAt, const Vector3& up)
 		{
 			Vector3 Z(position - lookAt);

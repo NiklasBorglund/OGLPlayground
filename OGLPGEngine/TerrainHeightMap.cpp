@@ -75,7 +75,7 @@ void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
 			int patchX = divisionX * (_patchWidth -1);
 			int patchY = divisionY * (_patchHeight -1);
 
-			VertexPosNormTex* vertices = new VertexPosNormTex[patchVertices];
+			VertexPosNormTexContainer* vertexContainer = new VertexPosNormTexContainer(patchVertices);
 			for (int x = 0; x < _patchWidth; x++)
 			{
 			   for (int y = 0; y < _patchHeight; y++)
@@ -83,10 +83,10 @@ void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
 				   int heightX = std::min(patchX + x, (_terrainWidth - 1));
 				   int heightY = std::min(patchY + y, (_terrainHeight - 1));
 
-					vertices[x + y * _patchWidth]._position = Vector3((float)heightX, heightData[heightX][heightY], (float)heightY);
-					vertices[x + y * _patchWidth]._normal = CalculateNormal(heightX, heightY, heightData);
-					vertices[x + y * _patchWidth]._texCoord = Vector2(((float)heightX / 30.0f), ((float)heightY / 30.0f));
-					
+				   VertexPosNormTex& currentVertex = vertexContainer->GetVertex(x + y * _patchWidth);
+				   currentVertex._position = Vector3((float)heightX, heightData[heightX][heightY], (float)heightY);
+				   currentVertex._normal = CalculateNormal(heightX, heightY, heightData);
+				   currentVertex._texCoord = Vector2(((float)heightX / 30.0f), ((float)heightY / 30.0f));
 			   }
 			}
 	
@@ -111,10 +111,11 @@ void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
 				}
 			}
 			
-			VertexBuffer* vertexBuffer = new VertexBuffer(patchVertices, vertices);
-			vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), 0);
-			vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3));
-			vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3) * 2);
+			int vertexSize = vertexContainer->GetVertexSize();
+			VertexBuffer* vertexBuffer = new VertexBuffer(patchVertices, (VertexContainer*)vertexContainer, vertexSize);
+			vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, vertexSize, 0);
+			vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, vertexSize, sizeof(Vector3));
+			vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, vertexSize, sizeof(Vector3) * 2);
 			IndexBuffer* indexBuffer = new IndexBuffer(patchIndices, indices);
 
 			_terrainMeshes.push_back(new Mesh(vertexBuffer,indexBuffer));

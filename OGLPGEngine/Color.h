@@ -27,12 +27,16 @@ public:
 		_a = (a / 255.0f);
 	}
 	~Color(){}
-
+	const float* Pointer() const
+	{
+		return &_r;
+	}
 	static Color Black()										{ return Color(0.0f, 0.0f, 0.0f, 1.0f); }
 	static Color White()										{ return Color(1.0f, 1.0f, 1.0f, 1.0f); }
 	static Color Red()											{ return Color(1.0f, 0.0f, 0.0f, 1.0f); }
 	static Color Green()										{ return Color(0.0f, 1.0f, 0.0f, 1.0f); }
 	static Color Blue()											{ return Color(0.0f, 0.0f, 1.0f, 1.0f); }
+	static Color Yellow()										{ return Color(1.0f, 1.0f, 0.0f, 1.0f); }
 	static Color LightSlateGray()								{ return Color(0.464f, 0.531f, 0.597f, 1.0f); }
 	static Color CornflowerBlue()								{ return Color(0.394f, 0.609f,0.933f,1.0f); }
 };

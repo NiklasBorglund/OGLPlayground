@@ -9,7 +9,7 @@
 #include <vector>
 
 class Color;
-class Component;
+class Renderer;
 class Camera;
 class GameTime;
 class RenderEngine
@@ -26,14 +26,20 @@ public:
 	void ClearBuffers();
 	void SwapBuffers();
 
-	void AddRenderingComponent(Component* component);
+	void AddRenderingComponent(Renderer* renderComponent);
     Camera* GetCameraComponent()const;
 
 	const GLFWWindow& GetWindow()const;
+	GLFWWindow* GetWindowPointer();
+
+	int GetDrawCalls()const;
+	int GetTriangleCount()const;
 private:
 	GLFWWindow _thisWindow;
 	GLuint _vertexArrayObject;
-	std::vector<Component*> _renderingUpdateStep;
+	std::vector<Renderer*> _renderingUpdateStep;
+	int _drawCalls;
+	int _trianglesDrawn;
 
 	Camera* _mainCameraComponent; 	//weak pointer to the main camera component
 };

@@ -64,11 +64,17 @@ public:
 	unsigned int GetStride() const;
 	unsigned int GetElementSize()const;
 	unsigned int GetNumberOfElements()const;
+	void BindBuffer();
+	void UnbindBuffer();
+	//Make sure that the buffer settings are correct before using this
+	//And that the buffer is bound to the context
+	void SetBufferData(int numberOfElements, GLvoid* bufferData); 
 	bool IsBuffer()const;
 
 	void SetStride(unsigned int stride);
 private:
 	GLenum _bufferType;
+	GLenum _bufferUsage;
 	GLuint _buffer;
 	unsigned int _stride;
 	unsigned int _elementSize;

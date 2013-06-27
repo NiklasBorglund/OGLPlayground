@@ -2,10 +2,11 @@
 #include "Camera.h"
 #include "GameObject.h"
 
-Camera::Camera(GameObject* owner): Component(owner, ComponentUpdateStep::DefaultUpdate()),
+Camera::Camera(GameObject* owner, CameraType cameraType): Component(owner, ComponentUpdateStep::DefaultUpdate()),
 	_projectionMatrix(Matrix4x4::Identity()), _viewMatrix(Matrix4x4::Identity()),
-	_nearClip(0.1f), _farClip(500.0f), _fovy(45.0f), _aspectRatio(1.77f), 
-	_lookAt(Vector3::Zero()), _up(Vector3::Up()), _isChanged(true)
+	_nearClip(0.1f), _farClip(500.0f), _fovy(45.0f), _aspectRatio(1.77f), _windowSize(1280.0f,720.0f), 
+	_lookAt(Vector3::Zero()), _up(Vector3::Up()),
+	_cameraType(cameraType.GetCameraType()),_isChanged(true)
 {}
 Camera::~Camera()
 {
@@ -13,14 +14,24 @@ Camera::~Camera()
 }
 void Camera::Update(GameTime* gameTime)
 {
-	if(this->_isChanged)
+	if(_cameraType == CAMERA_PERSPECTIVE)
 	{
-		_projectionMatrix.SetProjectionMatrixRH(_nearClip, _farClip, _fovy, _aspectRatio);
-		this->_isChanged = false;
+		if(this->_isChanged)
+		{
+			_projectionMatrix.SetProjectionMatrixRH(_nearClip, _farClip, _fovy, _aspectRatio);
+			this->_isChanged = false;
+		}
+		//Update the viewMatrix
+		_viewMatrix.SetLookAtRH(GetGameObject()->GetTransform().GetPosition(), _lookAt, _up);
 	}
-
-	//Update the viewMatrix
-	_viewMatrix.SetLookAtRH(GetGameObject()->GetTransform().GetPosition(), _lookAt, _up);
+	else if(_cameraType == CAMERA_ORTHOGRAPHIC)
+	{
+		if(this->_isChanged)
+		{
+			_projectionMatrix.SetOrthographicMatrixOffCenterRH(0, _windowSize._x, _windowSize._y, 0, _nearClip, _farClip);
+			this->_isChanged = false;
+		}
+	}
 }
 const Matrix4x4& Camera::GetProjectionMatrix()const {return _projectionMatrix;}
 const Matrix4x4& Camera::GetViewMatrix()const{return _viewMatrix;}
@@ -53,6 +64,7 @@ void Camera::SetAspectRatio(float aspectRatio)
 }
 void Camera::SetAspectRatio(const Vector2& windowSize)
 {
+	_windowSize = windowSize;
 	SetAspectRatio(windowSize._x / windowSize._y);
 }
 void Camera::SetLookAt(const Vector3& lookAt)

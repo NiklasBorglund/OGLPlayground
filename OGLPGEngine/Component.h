@@ -9,6 +9,7 @@ enum UpdateStep
 {
 	UPDATE_DEFAULT = 1,
 	UPDATE_RENDER = 2,
+	UPDATE_RENDER2D = 3,
 };
 
 class ComponentUpdateStep
@@ -16,6 +17,7 @@ class ComponentUpdateStep
 public:
 	static ComponentUpdateStep DefaultUpdate(){return ComponentUpdateStep(UPDATE_DEFAULT);}
 	static ComponentUpdateStep RenderUpdate(){return ComponentUpdateStep(UPDATE_RENDER);}
+	static ComponentUpdateStep Render2DUpdate(){return ComponentUpdateStep(UPDATE_RENDER2D);}
 
 	const UpdateStep GetUpdateStep() const
 	{

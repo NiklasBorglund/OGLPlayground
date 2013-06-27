@@ -3,20 +3,21 @@
 Buffer::Buffer(BufferType bufferType, BufferUsage bufferUsage, 
 			   unsigned int elementSize, unsigned int numberOfElements, 
 			   GLvoid* bufferData): 
-			   _bufferType(bufferType.GetBufferType()),_buffer(0), _stride(0), 
-				   _elementSize(elementSize), _numberOfElements(numberOfElements)
+			   _bufferType(bufferType.GetBufferType()), _bufferUsage(bufferUsage.GetBufferUsage()),
+			   _buffer(0), _stride(0), 
+			   _elementSize(elementSize), _numberOfElements(numberOfElements)
 {
 	//Generate the buffer
 	glGenBuffers(1, &_buffer);
     
 	//Bind the buffer to the context
-	glBindBuffer(_bufferType, _buffer);
+	BindBuffer();
 
 	//Set the buffer data
-	glBufferData(_bufferType, (_elementSize * _numberOfElements), bufferData, bufferUsage.GetBufferUsage());
+	glBufferData(_bufferType, (_elementSize * _numberOfElements), bufferData, _bufferUsage);
 
 	//Unbind the buffer
-    glBindBuffer(_bufferType, 0);
+	UnbindBuffer();
 }
 Buffer::~Buffer()
 {
@@ -45,6 +46,21 @@ unsigned int Buffer::GetElementSize()const
 unsigned int Buffer::GetNumberOfElements()const
 {
 	return this->_numberOfElements;
+}
+void Buffer::BindBuffer()
+{
+	glBindBuffer(_bufferType, _buffer);
+}
+void Buffer::UnbindBuffer()
+{
+	glBindBuffer(_bufferType, 0);
+}
+//Make sure that the buffer settings are correct before using this
+//And that the buffer is bound to the context
+void Buffer::SetBufferData(int numberOfElements, GLvoid* bufferData)
+{
+	_numberOfElements = numberOfElements;
+	glBufferData(_bufferType, (_elementSize * _numberOfElements), bufferData, _bufferUsage);
 }
 bool Buffer::IsBuffer()const
 {

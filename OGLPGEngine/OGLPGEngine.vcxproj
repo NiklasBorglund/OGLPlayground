@@ -107,7 +107,11 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Diffuse.h" />
+    <ClInclude Include="Diffuse2D.h" />
     <ClInclude Include="FileUtility.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontMaterial.h" />
+    <ClInclude Include="FontRenderer.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTime.h" />
@@ -121,8 +125,16 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="OpenGLVersion.h" />
     <ClInclude Include="Primitive.h" />
+    <ClInclude Include="Print2DDrawCalls.h" />
+    <ClInclude Include="Print2DTriangles.h" />
+    <ClInclude Include="Print3DDrawCalls.h" />
+    <ClInclude Include="Print3DTriangles.h" />
+    <ClInclude Include="PrintAvgFPS.h" />
+    <ClInclude Include="PrintFPS.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="RenderEngine.h" />
+    <ClInclude Include="RenderEngine2D.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SOIL.h" />
@@ -140,6 +152,8 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontRenderer.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTime.cpp" />
@@ -149,6 +163,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
+    <ClCompile Include="RenderEngine2D.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="TerrainHeightMap.cpp" />

@@ -94,6 +94,15 @@
     <Filter Include="Source Files\Engine\Time">
       <UniqueIdentifier>{2ff71249-615e-453e-a53d-7efb671015b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Rendering\Font">
+      <UniqueIdentifier>{63216221-1bd8-4aa6-976e-93d402f06ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Rendering\Font">
+      <UniqueIdentifier>{ea38852f-f8ae-4f3f-bf2e-780856cf8e87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Components\Debug">
+      <UniqueIdentifier>{b4240d72-7b88-42e7-811f-6a4f7f48c212}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h">
@@ -195,6 +204,42 @@
     <ClInclude Include="GameTime.h">
       <Filter>Header Files\Engine\Time</Filter>
     </ClInclude>
+    <ClInclude Include="RenderEngine2D.h">
+      <Filter>Header Files\Engine\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Diffuse2D.h">
+      <Filter>Header Files\Engine\Rendering\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files\Engine\Rendering\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="FontRenderer.h">
+      <Filter>Header Files\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="FontMaterial.h">
+      <Filter>Header Files\Engine\Rendering\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintFPS.h">
+      <Filter>Header Files\Engine\Components\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintAvgFPS.h">
+      <Filter>Header Files\Engine\Components\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Print3DDrawCalls.h">
+      <Filter>Header Files\Engine\Components\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Print3DTriangles.h">
+      <Filter>Header Files\Engine\Components\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Print2DDrawCalls.h">
+      <Filter>Header Files\Engine\Components\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Print2DTriangles.h">
+      <Filter>Header Files\Engine\Components\Debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -250,6 +295,15 @@
     </ClCompile>
     <ClCompile Include="GameTime.cpp">
       <Filter>Source Files\Engine\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderEngine2D.cpp">
+      <Filter>Source Files\Engine\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Source Files\Engine\Rendering\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="FontRenderer.cpp">
+      <Filter>Source Files\Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

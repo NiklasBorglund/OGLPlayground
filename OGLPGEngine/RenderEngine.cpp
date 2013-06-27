@@ -1,6 +1,6 @@
 //RenderEngine.cpp
 #include "RenderEngine.h"
-#include "Component.h"
+#include "Renderer.h"
 #include "Color.h"
 #include "Camera.h"
 #include "MeshRenderer.h"
@@ -8,7 +8,7 @@
 #include "OpenGLVersion.h"
 #include "GameTime.h"
 
-RenderEngine::RenderEngine(): _thisWindow(OpenGLVersion::OpenGL4_3(), GLFWOpenGLProfile::CoreProfile()), _vertexArrayObject(0)
+RenderEngine::RenderEngine(): _thisWindow(OpenGLVersion::OpenGL4_3(), GLFWOpenGLProfile::CoreProfile()), _vertexArrayObject(0), _drawCalls(0), _trianglesDrawn(0)
 {
 
 }
@@ -36,6 +36,9 @@ void RenderEngine::Initialize(Camera* cameraComponent)
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	glEnable(GL_DEPTH_TEST);
+
+	//Wireframe mode
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
 }
 void RenderEngine::Start()
 {
@@ -53,13 +56,19 @@ void RenderEngine::Update(GameTime* gameTime)
 		_mainCameraComponent->SetAspectRatio(_thisWindow.GetWindowSize());
 	}
 
+	int triangles = 0;
+	int drawCalls = 0;
 	for(unsigned int i = 0; i < _renderingUpdateStep.size(); i++)
 	{
-		MeshRenderer* currentComponent = static_cast<MeshRenderer*>(_renderingUpdateStep[i]);
+		Renderer* currentComponent = _renderingUpdateStep[i];
 		currentComponent->PreDraw(_mainCameraComponent);
 		currentComponent->Update(gameTime);//Draw
 		currentComponent->PostDraw();
+		triangles += currentComponent->GetNumberOfTriangles();
+		drawCalls += currentComponent->GetNumberOfDrawCalls();
 	}
+	_drawCalls = drawCalls;
+	_trianglesDrawn = triangles;
 }
 void RenderEngine::Shutdown()
 {
@@ -81,15 +90,27 @@ void RenderEngine::SwapBuffers()
 {
 	_thisWindow.SwapBuffers();
 }
-void RenderEngine::AddRenderingComponent(Component* component)
+void RenderEngine::AddRenderingComponent(Renderer* renderComponent)
 {
-	_renderingUpdateStep.push_back(component);
+	_renderingUpdateStep.push_back(renderComponent);
 }
 const GLFWWindow& RenderEngine::GetWindow()const
 {
 	return _thisWindow;
 }
+GLFWWindow* RenderEngine::GetWindowPointer()
+{
+	return &_thisWindow;
+}
 Camera* RenderEngine::GetCameraComponent()const
 {
 	return _mainCameraComponent;
+}
+int RenderEngine::GetDrawCalls()const
+{
+	return _drawCalls;
+}
+int RenderEngine::GetTriangleCount()const
+{
+	return _trianglesDrawn;
 }

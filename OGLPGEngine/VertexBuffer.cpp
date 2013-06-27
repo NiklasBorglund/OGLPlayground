@@ -18,19 +18,19 @@ GLvoid* VertexAttributeInformation::GetOffset() const{return (GLvoid*)this->offs
 VertexBuffer::VertexBuffer(BufferType bufferType, BufferUsage bufferUsage,unsigned int elementSize, unsigned int numberOfElements, GLvoid* bufferData): 
 		Buffer(bufferType, bufferUsage, elementSize, numberOfElements, bufferData)
 {
-	_vertices = NULL;
+	_vertexContainer = NULL;
 }
-VertexBuffer::VertexBuffer(unsigned int numberOfElements, VertexPosNormTex* vertices):
-	Buffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(), sizeof(VertexPosNormTex), numberOfElements, (GLvoid*)vertices),
-	_vertices(vertices)
+VertexBuffer::VertexBuffer(unsigned int numberOfElements, VertexContainer* vertexContainer, size_t vertexSize):
+	Buffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(), vertexSize, numberOfElements, vertexContainer->GetData()),
+	_vertexContainer(vertexContainer)
 {
 
 }
 VertexBuffer::~VertexBuffer()
 {
-	if(_vertices != NULL)
+	if(_vertexContainer != NULL)
 	{
-		delete [] _vertices;
+		delete _vertexContainer;
 	}
 }
 

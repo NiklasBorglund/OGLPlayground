@@ -6,8 +6,8 @@
 #include "Material.h"
 #include "Camera.h"
 
-MeshRenderer::MeshRenderer(GameObject* owner, Mesh* mesh, Material* material):
-	Component(owner, ComponentUpdateStep::RenderUpdate()),_mesh(mesh), _material(material){}
+MeshRenderer::MeshRenderer(GameObject* owner, Mesh* mesh, Material* material, ComponentUpdateStep componentUpdateStep):
+	Renderer(owner, componentUpdateStep),_mesh(mesh), _material(material){}
 MeshRenderer::~MeshRenderer(){}
 
 void MeshRenderer::PreDraw(Camera* currentCameraComponent)
@@ -18,6 +18,8 @@ void MeshRenderer::PreDraw(Camera* currentCameraComponent)
 
 void MeshRenderer::Update(GameTime* gameTime)
 {
+	int drawCalls = 0;
+	int triangles = 0;
 	if(_mesh != NULL)
 	{
 		VertexBuffer* vertexBuffer = _mesh->GetVertexBuffer();
@@ -26,7 +28,7 @@ void MeshRenderer::Update(GameTime* gameTime)
 		//Set the per object uniforms of the game object(for example - the world matrix)
 		_material->SetObjectUniforms(GetGameObject());
 
-		glBindBuffer(vertexBuffer->GetBufferType(), vertexBuffer->GetBuffer());
+		vertexBuffer->BindBuffer();
 		//Draw the mesh
 		unsigned int numberOfAttributeInformations = vertexBuffer->GetNumberOfAttributeInfos();
 		for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
@@ -42,17 +44,21 @@ void MeshRenderer::Update(GameTime* gameTime)
 		}
 
 		//Bind the index buffer
-		glBindBuffer(indexBuffer->GetBufferType(), indexBuffer->GetBuffer());
+		indexBuffer->BindBuffer();
 		//DRAW
 		glDrawElements(GL_TRIANGLES,indexBuffer->GetNumberOfElements(), indexBuffer->GetIndexType(), (GLvoid*)0);
-
+		drawCalls++;
+		triangles += indexBuffer->GetNumberOfElements() / 3;
 
 		for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 		{
 			glDisableVertexAttribArray(vertexBuffer->GetVertexAttributeInformation(i).GetIndex());
 		}
+		indexBuffer->UnbindBuffer();
+		vertexBuffer->UnbindBuffer();
 	}
-	//else, 
+	SetNumberOfDrawCalls(drawCalls);
+	SetNumberOfTriangles(triangles);
 }
 
 void MeshRenderer::PostDraw()

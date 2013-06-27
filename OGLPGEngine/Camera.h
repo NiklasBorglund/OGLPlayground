@@ -7,10 +7,31 @@
 #include "Matrix4x4.h"
 #include "Vector2.h"
 
+enum CameraTypeEnum
+{
+	CAMERA_PERSPECTIVE = 1,
+	CAMERA_ORTHOGRAPHIC = 2,
+};
+
+class CameraType
+{
+public:
+	static CameraType Perspective(){return CameraType(CAMERA_PERSPECTIVE);}
+	static CameraType Orthographic(){return CameraType(CAMERA_ORTHOGRAPHIC);}
+
+	const CameraTypeEnum GetCameraType() const
+	{
+		return _cameraType;
+	}
+private:
+	explicit CameraType(CameraTypeEnum cameraType):_cameraType(cameraType){}
+	CameraTypeEnum _cameraType;
+};
+
 class Camera: public Component
 {
 public:
-	Camera(GameObject* owner);
+	Camera(GameObject* owner, CameraType cameraType);
 	virtual ~Camera();
 
 	virtual void Update(GameTime* gameTime);
@@ -39,8 +60,10 @@ private:
 	float _farClip;
 	float _fovy;
 	float _aspectRatio;
+	Vector2 _windowSize;
 	Vector3 _lookAt;
 	Vector3 _up;
+	CameraTypeEnum _cameraType;
 	bool _isChanged;
 };
 

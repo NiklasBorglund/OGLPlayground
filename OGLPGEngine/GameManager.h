@@ -14,6 +14,7 @@
 #include "Vector2.h"
 #include "ResourceManager.h"
 #include "RenderEngine.h"
+#include "RenderEngine2D.h"
 
 
 class GameManager
@@ -41,12 +42,15 @@ private:
 	std::vector<Component*> _defaultUpdateStep;
 
 	RenderEngine _renderEngine;
+	RenderEngine2D _renderEngine2D;
 	ResourceManager _resourceManager;
 
 	GameTime _gameTime;
 
 	//Registers the component to the update loop
 	void RegisterComponent(Component* componentToRegister);
+
+	void LoadDebugComponents();
 };
 
 #endif //GAMEMANAGER_H_INCLUDED

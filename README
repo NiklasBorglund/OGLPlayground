@@ -1,7 +1,8 @@
 An OpenGL playground environment which I'll use to try new things, learn new techniques, create small projects etc..
 
-I'm using the following libraries:
+I'm using the following libraries(Which you'll need to download and install for the project to compile & run):
 SOIL - http://www.lonesock.net/soil.html
 GLFW - http://www.glfw.org/
 GLEW - http://glew.sourceforge.net/
 AssImp - http://assimp.sourceforge.net/
+FreeType - http://www.freetype.org/

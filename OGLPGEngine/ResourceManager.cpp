@@ -13,6 +13,20 @@ ResourceManager::ResourceManager()
 }
 ResourceManager::~ResourceManager()
 {
+	Shutdown();
+}
+
+void ResourceManager::Initialize()
+{
+	//Initialize the font library
+	if(FT_Init_FreeType(&_freeTypeLibrary))
+	{
+		//Error
+	}
+}
+void ResourceManager::Shutdown()
+{
+	_fonts.clear();
 	_materials.clear();
 	_meshes.clear();
 	_shaderPrograms.clear();
@@ -71,6 +85,12 @@ Mesh* ResourceManager::GetPrimitive(PrimitiveType primitiveType)
 			thisMesh = GetMesh(meshName);
 			break;
 		}
+    case PLANE_PRIMITIVE:
+		{
+			meshName = "plane_primitive";
+			thisMesh = GetMesh(meshName);
+			break;
+		}
 	default:
 		{
 			//Default in creating/getting a cube
@@ -89,6 +109,11 @@ Mesh* ResourceManager::GetPrimitive(PrimitiveType primitiveType)
 				thisMesh = Primitive::CreateCube();
 				break;
 			}
+		case PLANE_PRIMITIVE:
+			{
+				thisMesh = Primitive::CreatePlane();
+				break;
+			}
 		default:
 			{
 				//Default in creating/getting a cube
@@ -100,6 +125,19 @@ Mesh* ResourceManager::GetPrimitive(PrimitiveType primitiveType)
 	}
 
 	return thisMesh;
+}
+Font* ResourceManager::GetFont(std::string filePath)
+{
+	std::map<std::string, std::unique_ptr<Font>>::iterator it = _fonts.find(filePath);
+	if(it != _fonts.end())
+	{
+		return it->second.get();
+	}
+	Font* newFont = new Font();
+	_fonts.insert(std::pair<std::string, std::unique_ptr<Font>>(filePath, std::unique_ptr<Font>(newFont)));
+	newFont->Initialize(filePath, &_freeTypeLibrary);
+
+	return newFont;
 }
 std::vector<Mesh*> ResourceManager::GetModelFromFile(std::string filePath)
 {
@@ -118,20 +156,20 @@ std::vector<Mesh*> ResourceManager::GetModelFromFile(std::string filePath)
 			{
 				aiMesh* currentMesh = scene->mMeshes[i];
 		
-				VertexPosNormTex* vertexArray = new VertexPosNormTex[currentMesh->mNumVertices];
+				VertexPosNormTexContainer* vertexContainer = new VertexPosNormTexContainer(currentMesh->mNumVertices);
 				for(unsigned int j = 0; j < currentMesh->mNumVertices; j++)
 				{
 					if(currentMesh->HasPositions())
 					{
-						vertexArray[j]._position = Vector3(currentMesh->mVertices[j].x, currentMesh->mVertices[j].y, currentMesh->mVertices[j].z);
+						vertexContainer->GetVertex(j)._position = Vector3(currentMesh->mVertices[j].x, currentMesh->mVertices[j].y, currentMesh->mVertices[j].z);
 					}
 					if(currentMesh->HasNormals())
 					{
-						vertexArray[j]._normal = -Vector3(currentMesh->mNormals[j].x, currentMesh->mNormals[j].y, currentMesh->mNormals[j].z);
+						vertexContainer->GetVertex(j)._normal = -Vector3(currentMesh->mNormals[j].x, currentMesh->mNormals[j].y, currentMesh->mNormals[j].z);
 					}
 					if(currentMesh->HasTextureCoords(0))
 					{
-						vertexArray[j]._texCoord = Vector2(currentMesh->mTextureCoords[0][j].x, currentMesh->mTextureCoords[0][j].y);
+						vertexContainer->GetVertex(j)._texCoord = Vector2(currentMesh->mTextureCoords[0][j].x, currentMesh->mTextureCoords[0][j].y);
 					}
 				}
 
@@ -147,10 +185,10 @@ std::vector<Mesh*> ResourceManager::GetModelFromFile(std::string filePath)
 					}
 				}
 
-				VertexBuffer* vertexBuffer = new VertexBuffer(currentMesh->mNumVertices, vertexArray);
-				vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), 0);
-				vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3));
-				vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3) * 2);
+				VertexBuffer* vertexBuffer = new VertexBuffer(currentMesh->mNumVertices, (VertexContainer*)vertexContainer, vertexContainer->GetVertexSize());
+				vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, vertexContainer->GetVertexSize(), 0);
+				vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, vertexContainer->GetVertexSize(), sizeof(Vector3));
+				vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, vertexContainer->GetVertexSize(), sizeof(Vector3) * 2);
 				IndexBuffer* indexBuffer = new IndexBuffer((currentMesh->mNumFaces * 3), indices);
 
 				Mesh* newMesh = new Mesh(vertexBuffer,indexBuffer);

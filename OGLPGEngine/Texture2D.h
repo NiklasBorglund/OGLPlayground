@@ -12,6 +12,7 @@
 class Texture2D
 {
 public:
+	Texture2D();
 	Texture2D(std::string filePath);
 	Texture2D(std::string filePath, GLenum minFilter, GLenum magFilter, bool generateMipMaps);
 	~Texture2D();
@@ -21,6 +22,11 @@ public:
 	int GetWidth()const;
 	int GetHeight()const;
 	int GetChannels()const;
+	void BindTexture();
+	void UnbindTexture();
+	//Make sure the texture is bound
+	void SetTextureData(GLint level, GLenum internalFormat, int width, int height, GLint border, 
+					    GLenum format, GLenum type, const GLvoid* pixels);
 	std::vector<Color> GetImageData();
 	std::vector<GLubyte> GetImageDataRedColor(); //Gets a list of all the red color values
 

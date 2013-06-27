@@ -6,22 +6,20 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
-#include <memory>
-#include "Component.h"
+#include "Renderer.h"
 
 class Mesh;
 class GameObject;
 class Material;
-class Camera;
-class MeshRenderer : public Component
+class MeshRenderer : public Renderer
 {
 public:
-	MeshRenderer(GameObject* owner, Mesh* mesh, Material* _material);
+	MeshRenderer(GameObject* owner, Mesh* mesh, Material* material, ComponentUpdateStep componentUpdateStep = ComponentUpdateStep::RenderUpdate());
 	virtual ~MeshRenderer();
 
-	void PreDraw(Camera* currentCameraComponent);
+	virtual void PreDraw(Camera* currentCameraComponent);
 	virtual void Update(GameTime* gameTime); //<---Draw
-	void PostDraw();
+	virtual void PostDraw();
 
 private:
 	Mesh* _mesh;
