@@ -15,7 +15,6 @@ void Mesh::SetDefaultDiffuseTextureName(std::string defaultDiffuseTextureName)
 {
 	_defaultDiffuseTextureName = defaultDiffuseTextureName;
 }
-
 IndexBuffer* Mesh::GetIndexBuffer()
 {
 	return _indexBuffer.get();
@@ -23,4 +22,16 @@ IndexBuffer* Mesh::GetIndexBuffer()
 VertexBuffer* Mesh::GetVertexBuffer()
 {
 	return _vertexBuffer.get();
+}
+void Mesh::SetBoundingBox(const BoundingBox& boundingBox)
+{
+	_boundingBox = boundingBox;
+}
+void Mesh::SetBoundingBox(const Vector3& position, const Vector3& size)
+{
+	SetBoundingBox(BoundingBox(position, size));
+}
+const BoundingBox& Mesh::GetBoundingBox()
+{
+	return _boundingBox;
 }

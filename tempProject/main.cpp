@@ -10,6 +10,9 @@
 #include "FreeLookCamera.h"
 #include "FontRenderer.h"
 #include "FontMaterial.h"
+#include "TerrainCDLOD.h"
+#include "TerrainRenderer.h"
+#include "TerrainMaterial.h"
 #include <string>
 #include <memory>
 
@@ -36,13 +39,13 @@ int main()
 	}
 	*/
 	
-	
+	/*
 	resourceManager->StoreAndInitMaterial("terrainMaterial", 
 										new Diffuse(resourceManager->GetShaderProgram("Diffuse", "../data/Diffuse.vert", "../data/Diffuse.frag"),
-										resourceManager->GetTexture2D("../data/test.bmp")));
-
+										resourceManager->GetTexture2D("data/heightmap4.bmp")));
+	
 	TerrainHeightMap newTerrain;
-	newTerrain.CreateHeightMap(resourceManager->GetTexture2D("data/heightmap1.bmp"), 128);
+	newTerrain.CreateHeightMap(resourceManager->GetTexture2D("data/heightmap4.bmp"), 128);
 
 	//Test
 	int numberOfTerrainPatches = newTerrain.GetNumberOfPatches();
@@ -52,6 +55,7 @@ int main()
 		terrainObject->AddComponent(new MeshRenderer(terrainObject,newTerrain.GetTerrainMeshes()[i], resourceManager->GetMaterial("terrainMaterial")));
 		newManager.AddGameObject(terrainObject);
 	}
+	*/
 
 	
 	//TEST 2D OBJECT & Material
@@ -67,7 +71,18 @@ int main()
 	newManager.AddGameObject(cubeObject);
 	*/
 	
+	//CDLOD TERRAIN	
+	
+	resourceManager->StoreAndInitMaterial("TerrainMaterial", 
+										new TerrainMaterial(resourceManager->GetShaderProgram("TerrainShader", 
+										"../data/Terrain.vert", "../data/Terrain.frag"),resourceManager->GetTexture2D("data/heightmap4.bmp")));
 
+	TerrainCDLOD terrain((Camera*)newManager.GetMainCameraObject()->GetComponent(typeid(Camera)),resourceManager->GetTexture2D("data/heightmap4.bmp"));
+	GameObject* terrainObject = new GameObject();
+	terrainObject->AddComponent(new TerrainRenderer(terrainObject, &terrain, (TerrainMaterial*)resourceManager->GetMaterial("TerrainMaterial")));
+	newManager.AddGameObject(terrainObject);
+	
+	
 	//Add a movement script to the camera
 	GameObject* cameraObject = newManager.GetMainCameraObject();
 	newManager.AddComponentToGameObject(cameraObject, new FreeLookCamera(cameraObject));

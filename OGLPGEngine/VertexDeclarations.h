@@ -8,7 +8,13 @@
 #include "Vector2.h"
 #include "Vector3.h"
 
-
+struct VertexPos
+{
+public:
+	VertexPos():_position(0.0f){}
+	VertexPos(Vector3 position):_position(position){}
+	Vector3 _position;
+};
 struct VertexPosTex
 {
 public:
@@ -35,6 +41,36 @@ public:
 
 	virtual size_t GetVertexSize() = 0;
 	virtual GLvoid* GetData()= 0;
+};
+class VertexPosContainer : public VertexContainer
+{
+public:
+	VertexPosContainer(int numberOfVertices): _numberOfVertices(numberOfVertices)
+	{
+		_vertices = new VertexPos[numberOfVertices];
+	}
+	virtual ~VertexPosContainer()
+	{
+		if(_vertices != NULL)
+		{
+			delete [] _vertices;
+		}
+	}
+	virtual GLvoid* GetData()
+	{
+		return (GLvoid*)_vertices;
+	}
+	virtual size_t GetVertexSize()
+	{
+		return sizeof(VertexPos);
+	}
+	VertexPos& GetVertex(const int& i)
+	{
+		return this->_vertices[i];
+	}
+private:
+	VertexPos* _vertices;
+	int _numberOfVertices;
 };
 class VertexPosTexContainer : public VertexContainer
 {

@@ -20,6 +20,7 @@ public:
 	const Vector3& GetRight();
 	const Vector3& GetUp();
 	void SetScale(float x, float y, float z);
+	void SetScale(const Vector3& scale);
 	void SetRotationEuler(float x, float y, float z);
 	void SetRotationEuler(const Vector3& eulerAngles);
 	void SetRotation(const Quaternion& rotation);

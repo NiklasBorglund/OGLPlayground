@@ -59,6 +59,10 @@ void Transform::SetScale(float x, float y, float z)
 	_scaleMatrix._33 = z;
 	this->_didChange = true;
 }
+void Transform::SetScale(const Vector3& scale)
+{
+	SetScale(scale._x, scale._y, scale._z);
+}
 void Transform::SetRotationEuler(float x, float y, float z)
 {
 	_rotation.SetFromEuler(x,y,z);

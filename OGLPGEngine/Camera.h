@@ -6,6 +6,7 @@
 #include "Component.h"
 #include "Matrix4x4.h"
 #include "Vector2.h"
+#include "BoundingFrustum.h"
 
 enum CameraTypeEnum
 {
@@ -44,6 +45,7 @@ public:
 	float GetAspectRatio()const;
 	const Vector3& GetLookAt()const;
 	const Vector3& GetUpVector()const;
+	const BoundingFrustum& GetFrustum();
 	bool IsChanged()const; //Did any of the projection matrix values change?
 
 	void SetNearClip(float nearClip);
@@ -64,6 +66,7 @@ private:
 	Vector3 _lookAt;
 	Vector3 _up;
 	CameraTypeEnum _cameraType;
+	BoundingFrustum _frustum;
 	bool _isChanged;
 };
 

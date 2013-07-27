@@ -103,6 +103,24 @@
     <Filter Include="Header Files\Engine\Components\Debug">
       <UniqueIdentifier>{b4240d72-7b88-42e7-811f-6a4f7f48c212}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Base\Bounding Volumes">
+      <UniqueIdentifier>{e4e56dc2-f5cf-4ed5-812c-39ca1c878d92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering\Spatial Partitioning">
+      <UniqueIdentifier>{f6e066ae-bd5f-4146-87ef-77612a79db2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Rendering\Spatial Partitioning">
+      <UniqueIdentifier>{3be9a548-2ea0-4f55-9ad9-90f321e21172}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Rendering\Terrain\CDLOD">
+      <UniqueIdentifier>{d992cc64-83ee-42e8-bf1e-cd3bd945d19d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering\Terrain\CDLOD">
+      <UniqueIdentifier>{3e9dfa2f-9b34-4f7b-bf8c-047cba355d52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Rendering\Terrain\CDLOD\Heightmap Sources">
+      <UniqueIdentifier>{8bd2179a-ea3b-4e1a-95fd-2330212b0991}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h">
@@ -240,6 +258,54 @@
     <ClInclude Include="Print2DTriangles.h">
       <Filter>Header Files\Engine\Components\Debug</Filter>
     </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>Header Files\Base\Bounding Volumes</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingSphere.h">
+      <Filter>Header Files\Base\Bounding Volumes</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingFrustum.h">
+      <Filter>Header Files\Base\Bounding Volumes</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadtree.h">
+      <Filter>Header Files\Engine\Rendering\Spatial Partitioning</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMaterial.h">
+      <Filter>Header Files\Engine\Rendering\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainCDLOD.h">
+      <Filter>Header Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClInclude>
+    <ClInclude Include="CDLODSettings.h">
+      <Filter>Header Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClInclude>
+    <ClInclude Include="CDLODQuadTree.h">
+      <Filter>Header Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClInclude>
+    <ClInclude Include="CDLODNode.h">
+      <Filter>Header Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClInclude>
+    <ClInclude Include="CDLODSelection.h">
+      <Filter>Header Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMapSourceImage.h">
+      <Filter>Header Files\Engine\Rendering\Terrain\CDLOD\Heightmap Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainRenderer.h">
+      <Filter>Header Files\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMaterial.h">
+      <Filter>Header Files\Engine\Rendering\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="CDLODGridMesh.h">
+      <Filter>Header Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -304,6 +370,27 @@
     </ClCompile>
     <ClCompile Include="FontRenderer.cpp">
       <Filter>Source Files\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Quadtree.cpp">
+      <Filter>Source Files\Engine\Rendering\Spatial Partitioning</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainCDLOD.cpp">
+      <Filter>Source Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClCompile>
+    <ClCompile Include="CDLODQuadTree.cpp">
+      <Filter>Source Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClCompile>
+    <ClCompile Include="CDLODNode.cpp">
+      <Filter>Source Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClCompile>
+    <ClCompile Include="CDLODSelection.cpp">
+      <Filter>Source Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainRenderer.cpp">
+      <Filter>Source Files\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CDLODGridMesh.cpp">
+      <Filter>Source Files\Engine\Rendering\Terrain\CDLOD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

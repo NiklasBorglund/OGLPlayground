@@ -25,7 +25,7 @@ public:
 	virtual void Update(GameTime* gameTime); //<---Draw
 	virtual void PostDraw();
 
-	void SetText(std::string text);
+	void SetText(const std::string& text);
 private:
 	Material* _material;
 	Font* _font;

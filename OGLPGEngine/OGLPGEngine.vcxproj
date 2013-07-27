@@ -102,10 +102,20 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="BoundingFrustum.h" />
+    <ClInclude Include="BoundingSphere.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CDLODGridMesh.h" />
+    <ClInclude Include="CDLODNode.h" />
+    <ClInclude Include="CDLODQuadTree.h" />
+    <ClInclude Include="CDLODSelection.h" />
+    <ClInclude Include="CDLODSettings.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="DebugMaterial.h" />
     <ClInclude Include="Diffuse.h" />
     <ClInclude Include="Diffuse2D.h" />
     <ClInclude Include="FileUtility.h" />
@@ -116,6 +126,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="GLFWWindow.h" />
+    <ClInclude Include="HeightMapSourceImage.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Log.h" />
@@ -124,6 +135,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="OpenGLVersion.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Print2DDrawCalls.h" />
     <ClInclude Include="Print2DTriangles.h" />
@@ -131,6 +143,7 @@
     <ClInclude Include="Print3DTriangles.h" />
     <ClInclude Include="PrintAvgFPS.h" />
     <ClInclude Include="PrintFPS.h" />
+    <ClInclude Include="Quadtree.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="RenderEngine2D.h" />
@@ -138,7 +151,10 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SOIL.h" />
+    <ClInclude Include="TerrainCDLOD.h" />
     <ClInclude Include="TerrainHeightMap.h" />
+    <ClInclude Include="TerrainMaterial.h" />
+    <ClInclude Include="TerrainRenderer.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Uncopyable.h" />
@@ -151,6 +167,10 @@
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CDLODGridMesh.cpp" />
+    <ClCompile Include="CDLODNode.cpp" />
+    <ClCompile Include="CDLODQuadTree.cpp" />
+    <ClCompile Include="CDLODSelection.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FontRenderer.cpp" />
@@ -162,11 +182,14 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
     <ClCompile Include="RenderEngine.cpp" />
     <ClCompile Include="RenderEngine2D.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="TerrainCDLOD.cpp" />
     <ClCompile Include="TerrainHeightMap.cpp" />
+    <ClCompile Include="TerrainRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />

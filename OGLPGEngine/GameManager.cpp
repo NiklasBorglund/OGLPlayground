@@ -34,13 +34,13 @@ void GameManager::Initialize()
 
 	//Create the main camera object
 	GameObject* mainCamera = new GameObject();
-	mainCamera->GetTransform().SetPosition(0,2,-5);
+	mainCamera->GetTransform().SetPosition(-20,15,30);
 	Camera* cameraComponent = (Camera*)mainCamera->AddComponent(new Camera(mainCamera, CameraType::Perspective()));
 
 	AddGameObject(mainCamera); //Takes over the ownership of the game object
 
 	//Initialize the renderer
-	_renderEngine.Initialize(cameraComponent);
+	_renderEngine.Initialize(cameraComponent, &_resourceManager);
 	_renderEngine.SetClearColor(Color::CornflowerBlue());
 
 	//Create the 2D camera
@@ -197,33 +197,52 @@ void GameManager::LoadDebugComponents()
 										new FontMaterial(_resourceManager.GetShaderProgram("Font2D", "../data/FontMaterial.vert", "../data/FontMaterial.frag"),
 										Color::Yellow()));
 
+	GameObject* FPS = new GameObject();
+	FPS->GetTransform().SetPosition(Vector3(10,16,0));
+	FPS->AddComponent(new FontRenderer(FPS,_resourceManager.GetMaterial("FontMaterial"), debugFont, "FPS:"));
+	FPS->AddComponent(new PrintFPS(FPS));
+	AddGameObject(FPS);
+
+
 	GameObject* avgFPS = new GameObject();
-	avgFPS->GetTransform().SetPosition(Vector3(10,16,0));
+	avgFPS->GetTransform().SetPosition(Vector3(10,32,0));
 	avgFPS->AddComponent(new FontRenderer(avgFPS,_resourceManager.GetMaterial("FontMaterial"), debugFont, "Avg FPS:"));
 	avgFPS->AddComponent(new PrintAvgFPS(avgFPS));
 	AddGameObject(avgFPS);
 
     GameObject* drawCall3D = new GameObject();
-	drawCall3D->GetTransform().SetPosition(Vector3(10,32,0));
+	drawCall3D->GetTransform().SetPosition(Vector3(10,48,0));
 	drawCall3D->AddComponent(new FontRenderer(drawCall3D,_resourceManager.GetMaterial("FontMaterial"), debugFont, "Draw Calls(3D):"));
 	drawCall3D->AddComponent(new Print3DDrawCalls(drawCall3D, &_renderEngine));
 	AddGameObject(drawCall3D);
 
 	GameObject* drawCall2D = new GameObject();
-	drawCall2D->GetTransform().SetPosition(Vector3(10,48,0));
+	drawCall2D->GetTransform().SetPosition(Vector3(10,64,0));
 	drawCall2D->AddComponent(new FontRenderer(drawCall2D,_resourceManager.GetMaterial("FontMaterial"), debugFont, "Draw Calls(2D):"));
 	drawCall2D->AddComponent(new Print2DDrawCalls(drawCall2D, &_renderEngine2D));
 	AddGameObject(drawCall2D);
 
 	GameObject* triCount3D = new GameObject();
-	triCount3D->GetTransform().SetPosition(Vector3(10,64,0));
+	triCount3D->GetTransform().SetPosition(Vector3(10,80,0));
 	triCount3D->AddComponent(new FontRenderer(triCount3D,_resourceManager.GetMaterial("FontMaterial"), debugFont, "Triangles(3D):"));
 	triCount3D->AddComponent(new Print3DTriangles(triCount3D, &_renderEngine));
 	AddGameObject(triCount3D);
 
 	GameObject* triCount2D = new GameObject();
-	triCount2D->GetTransform().SetPosition(Vector3(10,80,0));
+	triCount2D->GetTransform().SetPosition(Vector3(10,96,0));
 	triCount2D->AddComponent(new FontRenderer(triCount2D,_resourceManager.GetMaterial("FontMaterial"), debugFont, "Triangles(2D):"));
 	triCount2D->AddComponent(new Print2DTriangles(triCount2D, &_renderEngine2D));
 	AddGameObject(triCount2D);
+
+	GameObject* drawDebugObjects = new GameObject();
+	drawDebugObjects->GetTransform().SetPosition(Vector3(10,704,0));
+	drawDebugObjects->AddComponent(new FontRenderer(drawDebugObjects,_resourceManager.GetMaterial("FontMaterial"), debugFont, 
+		"Press 'B' to toggle bounding boxes"));
+	AddGameObject(drawDebugObjects);
+
+	GameObject* drawWireframe = new GameObject();
+	drawWireframe->GetTransform().SetPosition(Vector3(10,688,0));
+	drawWireframe->AddComponent(new FontRenderer(drawWireframe,_resourceManager.GetMaterial("FontMaterial"), debugFont, 
+		"Press 'N' to toggle wireframe"));
+	AddGameObject(drawWireframe);
 }

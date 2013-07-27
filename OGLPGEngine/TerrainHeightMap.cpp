@@ -1,4 +1,6 @@
 //TerrainHeightMap.cpp
+//Simple unoptimized terrain divided into 
+//several submeshes
 #include "TerrainHeightMap.h"
 #include "Mesh.h"
 #include "VertexDeclarations.h"
@@ -68,12 +70,18 @@ void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
 	//Clear the image data
 	imageData.clear();
 
+	//AABB test
+	Vector3 patchOrigin;
+
 	for(int divisionX = 0; divisionX < widthPatches; divisionX++)
 	{
 		for(int divisionY = 0; divisionY < heightPatches; divisionY++)
 		{
 			int patchX = divisionX * (_patchWidth -1);
 			int patchY = divisionY * (_patchHeight -1);
+			
+			//temp
+			float highValue = 0.0f;
 
 			VertexPosNormTexContainer* vertexContainer = new VertexPosNormTexContainer(patchVertices);
 			for (int x = 0; x < _patchWidth; x++)
@@ -86,7 +94,19 @@ void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
 				   VertexPosNormTex& currentVertex = vertexContainer->GetVertex(x + y * _patchWidth);
 				   currentVertex._position = Vector3((float)heightX, heightData[heightX][heightY], (float)heightY);
 				   currentVertex._normal = CalculateNormal(heightX, heightY, heightData);
-				   currentVertex._texCoord = Vector2(((float)heightX / 30.0f), ((float)heightY / 30.0f));
+				   //currentVertex._texCoord = Vector2(((float)heightX / 30.0f), ((float)heightY / 30.0f));
+				   currentVertex._texCoord = Vector2(heightX / 1024.0f, heightY / 1024.0f);
+
+				   //TEMP
+				   if(x == 0 && y == 0)
+				   {
+					   patchOrigin = currentVertex._position;
+					   patchOrigin._y = 0;
+				   }
+				   if(highValue < currentVertex._position._y)
+				   {
+					   highValue = currentVertex._position._y;
+				   }
 			   }
 			}
 	
@@ -118,7 +138,14 @@ void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
 			vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, vertexSize, sizeof(Vector3) * 2);
 			IndexBuffer* indexBuffer = new IndexBuffer(patchIndices, indices);
 
-			_terrainMeshes.push_back(new Mesh(vertexBuffer,indexBuffer));
+			Mesh* terrainMesh = new Mesh(vertexBuffer, indexBuffer);
+			//Test with bounding boxes
+			int halfPatchX = patchX + ((patchSize) / 2.0f);
+			int halfPatchY = patchY + ((patchSize) / 2.0f);
+			Vector3 boxSize = Vector3(patchSize * 0.5f, highValue * 0.5f, patchSize * 0.5f);
+			Vector3 boxPosition = patchOrigin + boxSize;
+			terrainMesh->SetBoundingBox(boxPosition, boxSize);
+			_terrainMeshes.push_back(terrainMesh);
 		}
 	}
 	//We're done with the height data, so clear it

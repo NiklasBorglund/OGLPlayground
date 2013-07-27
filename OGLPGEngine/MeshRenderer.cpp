@@ -7,7 +7,10 @@
 #include "Camera.h"
 
 MeshRenderer::MeshRenderer(GameObject* owner, Mesh* mesh, Material* material, ComponentUpdateStep componentUpdateStep):
-	Renderer(owner, componentUpdateStep),_mesh(mesh), _material(material){}
+	Renderer(owner, componentUpdateStep),_mesh(mesh), _material(material)
+{
+	SetOriginalBoundingBox(mesh->GetBoundingBox());
+}
 MeshRenderer::~MeshRenderer(){}
 
 void MeshRenderer::PreDraw(Camera* currentCameraComponent)

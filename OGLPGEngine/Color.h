@@ -39,5 +39,7 @@ public:
 	static Color Yellow()										{ return Color(1.0f, 1.0f, 0.0f, 1.0f); }
 	static Color LightSlateGray()								{ return Color(0.464f, 0.531f, 0.597f, 1.0f); }
 	static Color CornflowerBlue()								{ return Color(0.394f, 0.609f,0.933f,1.0f); }
+	static Color Gray()											{ return Color(0.742f, 0.742f,0.742f,1.0f); }
+	static Color Purple()										{ return Color(0.625f, 0.125f,0.937f,1.0f); }
 };
 #endif //COLOR_H_INCLUDED

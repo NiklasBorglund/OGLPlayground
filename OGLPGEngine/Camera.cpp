@@ -4,7 +4,7 @@
 
 Camera::Camera(GameObject* owner, CameraType cameraType): Component(owner, ComponentUpdateStep::DefaultUpdate()),
 	_projectionMatrix(Matrix4x4::Identity()), _viewMatrix(Matrix4x4::Identity()),
-	_nearClip(0.1f), _farClip(500.0f), _fovy(45.0f), _aspectRatio(1.77f), _windowSize(1280.0f,720.0f), 
+	_nearClip(0.1f), _farClip(5000.0f), _fovy(45.0f), _aspectRatio(1.77f), _windowSize(1280.0f,720.0f), 
 	_lookAt(Vector3::Zero()), _up(Vector3::Up()),
 	_cameraType(cameraType.GetCameraType()),_isChanged(true)
 {}
@@ -41,6 +41,12 @@ float Camera::GetFOVY()const{return _fovy;}
 float Camera::GetAspectRatio()const{return _aspectRatio;}
 const Vector3& Camera::GetLookAt()const{return _lookAt;}
 const Vector3& Camera::GetUpVector()const{return _up;}
+const BoundingFrustum& Camera::GetFrustum()
+{
+	Matrix4x4 viewProjMatrix = _viewMatrix * _projectionMatrix;
+	_frustum.CalculateFromMatrix(viewProjMatrix);
+	return _frustum;
+}
 
 void Camera::SetNearClip(float nearClip)
 {

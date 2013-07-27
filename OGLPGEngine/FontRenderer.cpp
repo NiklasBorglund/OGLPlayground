@@ -110,7 +110,7 @@ void FontRenderer::PostDraw()
 	_material->End();
 }
 
-void FontRenderer::SetText(std::string text)
+void FontRenderer::SetText(const std::string& text)
 {
 	_text = text;
 }

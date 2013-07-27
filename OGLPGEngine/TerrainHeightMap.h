@@ -1,4 +1,6 @@
 //TerrainHeightMap.h
+//Simple unoptimized terrain divided into 
+//several submeshes
 #ifndef TERRAINHEIGHTMAP_H_INCLUDED
 #define TERRAINHEIGHTMAP_H_INCLUDED
 
