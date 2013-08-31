@@ -2,8 +2,6 @@
 #ifndef INPUTMANAGER_H_INCLUDED
 #define INPUTMANAGER_H_INCLUDED
 
-#define GLEW_STATIC
-#include <GL/glew.h>
 #include <GL\glfw.h>
 
 class InputManager

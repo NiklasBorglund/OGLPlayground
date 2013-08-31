@@ -2,13 +2,13 @@
 #include "IndexBuffer.h"
 
 //Indexbuffer
-IndexBuffer::IndexBuffer(unsigned int elementSize, unsigned int numberOfElements, GLIndexDataType indexType, GLvoid* bufferData): 
-	Buffer(BufferType::ElementArrayBuffer(), BufferUsage::StaticDraw(), elementSize, numberOfElements, bufferData), _indexType(indexType.GetIndexDataType()), _indices(0)
+IndexBuffer::IndexBuffer(GraphicsDevice* graphicsDevice,unsigned int elementSize, unsigned int numberOfElements, GraphicsDataType indexType, void* bufferData): 
+	Buffer(graphicsDevice, BufferType::ElementArrayBuffer(), BufferUsage::StaticDraw(), elementSize, numberOfElements, bufferData), _indexType(indexType), _indices(0)
 {
 }
-IndexBuffer::IndexBuffer(unsigned int numberOfElements, GLuint* indices): 
-	Buffer(BufferType::ElementArrayBuffer(), BufferUsage::StaticDraw(), sizeof(GLuint), numberOfElements, (GLvoid*)indices), 
-	_indexType(GLIndexDataType::UnsignedInt().GetIndexDataType()), _indices(indices)
+IndexBuffer::IndexBuffer(GraphicsDevice* graphicsDevice,unsigned int numberOfElements, unsigned int* indices): 
+	Buffer(graphicsDevice,BufferType::ElementArrayBuffer(), BufferUsage::StaticDraw(), sizeof(unsigned int), numberOfElements, (void*)indices), 
+	_indexType(GraphicsDataType::UnsignedInt()), _indices(indices)
 {
 
 }
@@ -19,7 +19,7 @@ IndexBuffer::~IndexBuffer()
 		delete [] _indices;
 	}
 }
-const GLenum IndexBuffer::GetIndexType() const
+const GraphicsDataType IndexBuffer::GetIndexDataType()const
 {
-		return this->_indexType;
+	return this->_indexType;
 }

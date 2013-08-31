@@ -2,9 +2,6 @@
 #ifndef RENDERENGINE_H_INCLUDED
 #define RENDERENGINE_H_INCLUDED
 
-#define GLEW_STATIC
-#include <GL\glew.h>
-
 #include "GLFWWindow.h"
 #include <vector>
 #include "Quadtree.h"
@@ -19,13 +16,14 @@ class Renderer;
 class Camera;
 class GameTime;
 class ResourceManager;
+class GraphicsDevice;
 class RenderEngine
 {
 public:
 	RenderEngine();
 	~RenderEngine();
 
-	void Initialize(Camera* cameraComponent, ResourceManager* resourceManager);
+	void Initialize(Camera* cameraComponent, ResourceManager* resourceManager, GraphicsDevice* graphicsDevice);
 	void Start(); //will be run just before the first update
 	void Update(GameTime* gameTime);
 	void Shutdown();
@@ -44,6 +42,7 @@ public:
 private:
 	GLFWWindow _thisWindow;
 	GLuint _vertexArrayObject;
+	GraphicsDevice* _graphicsDevice;
 	std::vector<Renderer*> _renderingUpdateStep;
 	int _drawCalls;
 	int _trianglesDrawn;

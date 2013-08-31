@@ -6,6 +6,7 @@
 #include <memory>
 #include "GameObject.h"
 #include "GameTime.h"
+#include "GraphicsDevice.h"
 
 //Temp
 #include "Material.h"
@@ -36,11 +37,13 @@ public:
 
 	ResourceManager* GetResourceManager();
 	GameObject* GetMainCameraObject()const;
+	GraphicsDevice* GetGraphicsDevice();
 private:
 	GLuint _vertexArrayObject;
 	std::vector<std::unique_ptr<GameObject>> _gameObjects;
 	std::vector<Component*> _defaultUpdateStep;
 
+	GraphicsDevice _graphicsDevice;
 	RenderEngine _renderEngine;
 	RenderEngine2D _renderEngine2D;
 	ResourceManager _resourceManager;

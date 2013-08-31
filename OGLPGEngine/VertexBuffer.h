@@ -9,21 +9,21 @@
 class VertexAttributeInformation
 {
 public:
-	VertexAttributeInformation(GLuint index, GLint size, GLenum type, GLboolean normalized, unsigned int stride, unsigned int offset);
+	VertexAttributeInformation(unsigned int index, int size, GraphicsDataType type, bool normalized, unsigned int stride, unsigned int offset);
 	~VertexAttributeInformation();
 
-	const GLuint GetIndex()const;
-	const GLint GetSize()const;
-	const GLenum GetType()const;
-	const GLboolean GetIsNormalized()const;
+	const unsigned int GetIndex()const;
+	const int GetSize()const;
+	const GraphicsDataType GetType()const;
+	const bool GetIsNormalized()const;
 	const unsigned int GetStride()const;
-	GLvoid* GetOffset() const;
+	void* GetOffset() const;
 
 private:
-	GLuint index;
-	GLint size;
-	GLenum type;
-	GLboolean normalized;
+	unsigned int index;
+	int size;
+	GraphicsDataType type;
+	bool normalized;
 	unsigned int stride;
 	unsigned int offset;
 };
@@ -33,12 +33,12 @@ class VertexBuffer: public Buffer
 {
 public:
 	/* using this will require you to delete the bufferdata yourself */
-	VertexBuffer(BufferType bufferType, BufferUsage bufferUsage,unsigned int elementSize, unsigned int numberOfElements, GLvoid* bufferData);
+	VertexBuffer(GraphicsDevice* graphicsDevice,BufferType bufferType, BufferUsage bufferUsage,unsigned int elementSize, unsigned int numberOfElements, void* bufferData);
 
-	VertexBuffer(unsigned int numberOfElements, VertexContainer* vertexContainer, size_t vertexSize);
+	VertexBuffer(GraphicsDevice* graphicsDevice,unsigned int numberOfElements, VertexContainer* vertexContainer, size_t vertexSize);
 	virtual ~VertexBuffer();
 
-	void AddVertexAttributeInformation(GLuint index, GLint size, GLenum type, GLboolean normalized,unsigned int stride, unsigned int offset);
+	void AddVertexAttributeInformation(unsigned int index, int size, GraphicsDataType type, bool normalized,unsigned int stride, unsigned int offset);
 	const VertexAttributeInformation& GetVertexAttributeInformation(int index)const;
 	int GetNumberOfAttributeInfos()const;
 private:

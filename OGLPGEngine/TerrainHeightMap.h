@@ -9,6 +9,7 @@
 class Mesh;
 class Texture2D;
 class Vector3;
+class GraphicsDevice;
 class TerrainHeightMap
 {
 public:
@@ -16,7 +17,7 @@ public:
 	~TerrainHeightMap();
 
 	void Clear();
-	void CreateHeightMap(Texture2D* heightMap, int patchSize);
+	void CreateHeightMap(GraphicsDevice* graphicsDevice, Texture2D* heightMap, int patchSize);
 	const std::vector<Mesh*>& GetTerrainMeshes();
 	int GetNumberOfPatches()const;
 private:

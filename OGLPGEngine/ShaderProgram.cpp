@@ -1,15 +1,16 @@
 //ShaderProgram.cpp
 #include "ShaderProgram.h"
+#include "GraphicsDevice.h"
 
-ShaderProgram::ShaderProgram(): _isCompiledAndLinked(false), _compilerError(false), _linkerError(false), _program(0)
+ShaderProgram::ShaderProgram(GraphicsDevice* graphicsDevice): _graphicsDevice(graphicsDevice), _isCompiledAndLinked(false), _compilerError(false), _linkerError(false), _program(0)
 {
 }
-ShaderProgram::ShaderProgram(const char* vertexShaderData, const char* fragmentShaderData): _isCompiledAndLinked(false), _compilerError(false), _linkerError(false), _program(0)
+ShaderProgram::ShaderProgram(GraphicsDevice* graphicsDevice,const char* vertexShaderData, const char* fragmentShaderData): _graphicsDevice(graphicsDevice),_isCompiledAndLinked(false), _compilerError(false), _linkerError(false), _program(0)
 {
 	AddShaderToProgram(ShaderType::VertexShader(), vertexShaderData);
 	AddShaderToProgram(ShaderType::FragmentShader(), fragmentShaderData);
 }
-ShaderProgram::ShaderProgram(std::string vertexShaderData, std::string fragmentShaderData): _isCompiledAndLinked(false), _compilerError(false), _linkerError(false), _program(0)
+ShaderProgram::ShaderProgram(GraphicsDevice* graphicsDevice,std::string vertexShaderData, std::string fragmentShaderData):_graphicsDevice(graphicsDevice), _isCompiledAndLinked(false), _compilerError(false), _linkerError(false), _program(0)
 {
 	AddShaderToProgram(ShaderType::VertexShader(), vertexShaderData.c_str());
 	AddShaderToProgram(ShaderType::FragmentShader(), fragmentShaderData.c_str());
@@ -20,19 +21,19 @@ ShaderProgram::~ShaderProgram()
 	{
 		for(unsigned int i = 0; i < _shaderList.size(); i++)
 		{
-			glDeleteShader(_shaderList[i]);
+			_graphicsDevice->DeleteShader(_shaderList[i]);
 		}
 		_shaderList.clear();
 	}
-	if(glIsProgram(_program))
+	if(_graphicsDevice->IsShaderProgram(_program))
 	{
-		glDeleteProgram(_program);
+		_graphicsDevice->DeleteProgram(_program);
 	}
 }
 
 bool ShaderProgram::AddShaderToProgram(ShaderType shaderType, const char* shaderData)
 {
-	GLuint compiledShader = CompileShader(shaderType.GetShaderType(), shaderData);
+	unsigned int compiledShader = CompileShader(shaderType, shaderData);
 
 	//Check if the compilation was a success
 	bool success = !CompilerError();
@@ -40,7 +41,7 @@ bool ShaderProgram::AddShaderToProgram(ShaderType shaderType, const char* shader
 	if(!success)
 	{
 		//Delete the created shader
-		glDeleteShader(compiledShader);
+		_graphicsDevice->DeleteShader(compiledShader);
 	}
 	else
 	{
@@ -52,24 +53,27 @@ bool ShaderProgram::AddShaderToProgram(ShaderType shaderType, const char* shader
 bool ShaderProgram::CreateAndLinkProgram()
 {
 	//create the program
-	_program = glCreateProgram();
+	_program = _graphicsDevice->CreateProgram();
 
 	//loop through all the compiled shaders and attach them to the program
 	for(unsigned int i = 0; i < _shaderList.size(); i++)
 	{
-		glAttachShader(_program, _shaderList[i]);
+		_graphicsDevice->AttachShaderToProgram(_program, _shaderList[i]);
 	}
 
 	//Link the program
-	glLinkProgram(_program);
+	_graphicsDevice->LinkProgram(_program);
 
 	//Check the linker status
-	CheckProgramLinkerStatus();
+	if(!_graphicsDevice->CheckProgramLinkerStatus(_program))
+	{
+		this->_linkerError = true;
+	}
 
 	//Detach all the shaders from the program(we don't need them anymore)
 	for(unsigned int i = 0; i < _shaderList.size(); i++)
 	{
-		glDetachShader(_program, _shaderList[i]);
+		_graphicsDevice->DetachShaderFromProgram(_program, _shaderList[i]);
 	}
 
 	//clear the shader list
@@ -78,7 +82,7 @@ bool ShaderProgram::CreateAndLinkProgram()
 	bool success = !LinkerError();
 	if(!success)
 	{
-		glDeleteProgram(_program);
+		_graphicsDevice->DeleteProgram(_program);
 	}
 	else
 	{
@@ -86,7 +90,7 @@ bool ShaderProgram::CreateAndLinkProgram()
 	}
 	return success;
 }
-const GLuint ShaderProgram::GetProgram()const
+const unsigned int ShaderProgram::GetProgram()const
 {
 	return this->_program;
 }
@@ -95,70 +99,23 @@ bool ShaderProgram::IsCompiledAndLinked()const {return this->_isCompiledAndLinke
 bool ShaderProgram::CompilerError()const {return this->_compilerError;}
 bool ShaderProgram::LinkerError()const {return this->_linkerError;}
 
-GLuint ShaderProgram::CompileShader(GLenum shaderType, const char* shaderData)
+unsigned int ShaderProgram::CompileShader(ShaderType shaderType, const char* shaderData)
 {
 	//create the shader
-	GLuint thisShader = glCreateShader(shaderType);
+	unsigned int thisShader = _graphicsDevice->CreateShader(shaderType);
 	
 	//set the shader source
-	glShaderSource(thisShader, 1, &shaderData, NULL);
+	_graphicsDevice->SetShaderDataSource(thisShader, 1, shaderData, NULL);
 
 	//Compile the shader
-	glCompileShader(thisShader);
+	_graphicsDevice->CompileShader(thisShader);
 
 	//Check for errors
-	CheckShaderCompileStatus(thisShader, shaderType);
+	if(!_graphicsDevice->CheckShaderCompileStatus(thisShader, shaderType))
+	{
+		this->_compilerError = true;
+	}
 
 	return thisShader;
 }
 
-void ShaderProgram::CheckShaderCompileStatus(GLuint shader, GLenum shaderType)
-{
-	GLint status;
-	//Get the compile status
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-
-	if (status == GL_FALSE)
-	{
-		//Set the compiler error boolean
-		this->_compilerError = true;
-
-		//Get the error message and print it to output
-		GLint infoLogLength;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-		GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-		glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
-
-		//for easier readability and debugging
-		const char *strShaderType = NULL;
-		switch(shaderType)
-		{
-			case GL_VERTEX_SHADER: strShaderType = "vertex"; break;
-			case GL_GEOMETRY_SHADER: strShaderType = "geometry"; break;
-			case GL_FRAGMENT_SHADER: strShaderType = "fragment"; break;
-			case GL_TESS_CONTROL_SHADER: strShaderType = "tesselation control"; break;
-			case GL_TESS_EVALUATION_SHADER: strShaderType = "tesselation evaluation"; break;
-		}
-
-		fprintf(stderr, "Compile failure in %s shader:\n%s\n", strShaderType, strInfoLog);
-		delete[] strInfoLog;
-	}
-}
-void ShaderProgram::CheckProgramLinkerStatus()
-{
-	GLint status;
-	glGetProgramiv (_program, GL_LINK_STATUS, &status);
-	if (status == GL_FALSE)
-	{
-		this->_linkerError = true;
-
-		GLint infoLogLength;
-		glGetProgramiv(_program, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-		GLchar *strInfoLog = new GLchar[infoLogLength + 1];
-		glGetProgramInfoLog(_program, infoLogLength, NULL, strInfoLog);
-		fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-		delete[] strInfoLog;
-	}
-}

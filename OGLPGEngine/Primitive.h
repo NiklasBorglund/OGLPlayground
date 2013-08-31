@@ -47,26 +47,27 @@ const GLushort planeIndices[] =
 	0,1,2,0,2,3,
 };
 
+class GraphicsDevice;
 class Primitive
 {
 public:
-	static Mesh* CreateCube()
+	static Mesh* CreateCube(GraphicsDevice* graphicsDevice)
 	{
-		VertexBuffer* vertexBuffer = new VertexBuffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(),sizeof(VertexPosNormTex), sizeof(cubeVertices) / sizeof(VertexPosNormTex), (GLvoid*)cubeVertices);
-		vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), 0);
-		vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3));
-		vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosNormTex), sizeof(Vector3) * 2);
-		IndexBuffer* indexBuffer = new IndexBuffer( sizeof(float), sizeof(cubeIndices) / sizeof(float),GLIndexDataType::UnsignedInt(), (GLvoid*)cubeIndices);
+		VertexBuffer* vertexBuffer = new VertexBuffer(graphicsDevice,BufferType::ArrayBuffer(), BufferUsage::StaticDraw(),sizeof(VertexPosNormTex), sizeof(cubeVertices) / sizeof(VertexPosNormTex), (GLvoid*)cubeVertices);
+		vertexBuffer->AddVertexAttributeInformation(0,3,GraphicsDataType::Float(), false, sizeof(VertexPosNormTex), 0);
+		vertexBuffer->AddVertexAttributeInformation(1,3,GraphicsDataType::Float(), false, sizeof(VertexPosNormTex), sizeof(Vector3));
+		vertexBuffer->AddVertexAttributeInformation(2,2,GraphicsDataType::Float(), false, sizeof(VertexPosNormTex), sizeof(Vector3) * 2);
+		IndexBuffer* indexBuffer = new IndexBuffer(graphicsDevice, sizeof(float), sizeof(cubeIndices) / sizeof(float),GraphicsDataType::UnsignedInt(), (GLvoid*)cubeIndices);
 
 		//The mesh takes over the ownership of the buffers
 		return new Mesh(vertexBuffer, indexBuffer);
 	}
-	static Mesh* CreatePlane()
+	static Mesh* CreatePlane(GraphicsDevice* graphicsDevice)
 	{
-		VertexBuffer* vertexBuffer = new VertexBuffer(BufferType::ArrayBuffer(), BufferUsage::StaticDraw(),sizeof(VertexPosTex), sizeof(planeVertices) / sizeof(VertexPosTex), (GLvoid*)planeVertices);
-		vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), 0);
-		vertexBuffer->AddVertexAttributeInformation(1,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), sizeof(Vector3));
-		IndexBuffer* indexBuffer = new IndexBuffer( sizeof(GLushort), sizeof(planeIndices) / sizeof(GLushort),GLIndexDataType::UnsignedShort(), (GLvoid*)planeIndices);
+		VertexBuffer* vertexBuffer = new VertexBuffer(graphicsDevice,BufferType::ArrayBuffer(), BufferUsage::StaticDraw(),sizeof(VertexPosTex), sizeof(planeVertices) / sizeof(VertexPosTex), (GLvoid*)planeVertices);
+		vertexBuffer->AddVertexAttributeInformation(0,3,GraphicsDataType::Float(), false, sizeof(VertexPosTex), 0);
+		vertexBuffer->AddVertexAttributeInformation(1,2,GraphicsDataType::Float(), false, sizeof(VertexPosTex), sizeof(Vector3));
+		IndexBuffer* indexBuffer = new IndexBuffer(graphicsDevice, sizeof(GLushort), sizeof(planeIndices) / sizeof(GLushort),GraphicsDataType::UnsignedShort(), (GLvoid*)planeIndices);
 
 		//The mesh takes over the ownership of the buffers
 		return new Mesh(vertexBuffer, indexBuffer);

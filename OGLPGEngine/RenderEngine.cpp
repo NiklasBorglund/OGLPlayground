@@ -7,6 +7,7 @@
 #include "Vector2.h"
 #include "OpenGLVersion.h"
 #include "GameTime.h"
+#include "GraphicsDevice.h"
 
 //Debugging
 #include "VertexDeclarations.h"
@@ -23,10 +24,11 @@ RenderEngine::~RenderEngine()
 {
 	Shutdown();
 }
-void RenderEngine::Initialize(Camera* cameraComponent, ResourceManager* resourceManager)
+void RenderEngine::Initialize(Camera* cameraComponent, ResourceManager* resourceManager, GraphicsDevice* graphicsDevice)
 {
 	this->_mainCameraComponent = cameraComponent;
 	this->_resourceManager = resourceManager;
+	this->_graphicsDevice = _graphicsDevice;
 
 	if(!_thisWindow.IsInitialized() ||
 		!_thisWindow.OpenWindowAndInitalizeGLEW(1280,720,8,8,8,8,24,8,false))
@@ -37,16 +39,14 @@ void RenderEngine::Initialize(Camera* cameraComponent, ResourceManager* resource
 	//Set the aspect ratio
 	_mainCameraComponent->SetAspectRatio(_thisWindow.GetWindowSize());
 
-	glGenVertexArrays(1, &_vertexArrayObject);
-	glBindVertexArray(_vertexArrayObject);
+	_graphicsDevice->GenerateVertexArrays(1, &_vertexArrayObject);
+	_graphicsDevice->BindVertexArray(_vertexArrayObject);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
-	glEnable(GL_DEPTH_TEST);
+	graphicsDevice->EnableGraphicsMode(GraphicsMode::CullFace());
+	graphicsDevice->SetCullMode(CullMode::Back());
+	graphicsDevice->SetFrontFace(true);
+	graphicsDevice->EnableGraphicsMode(GraphicsMode::DepthTest());
 
-	//Wireframe mode
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
 
 	//Set up debug drawing components (visible bounding boxes etc)
 	SetupDebugDrawingComponents();
@@ -82,7 +82,7 @@ void RenderEngine::Update(GameTime* gameTime)
 
 	if(_drawWireframe)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE );
+		_graphicsDevice->SetPolygonMode(PolygonMode::Line());
 	}
 
 	std::vector<Renderer*> selection;
@@ -90,9 +90,9 @@ void RenderEngine::Update(GameTime* gameTime)
 	for(unsigned int i = 0; i < selection.size(); i++)
 	{
 		Renderer* currentComponent = selection[i];
-		currentComponent->PreDraw(_mainCameraComponent);
-		currentComponent->Update(gameTime);//Draw
-		currentComponent->PostDraw();
+		currentComponent->PreDraw(_mainCameraComponent, _graphicsDevice);
+		currentComponent->Update(gameTime, _graphicsDevice);//Draw
+		currentComponent->PostDraw(_graphicsDevice);
 		triangles += currentComponent->GetNumberOfTriangles();
 		drawCalls += currentComponent->GetNumberOfDrawCalls();
 
@@ -104,7 +104,7 @@ void RenderEngine::Update(GameTime* gameTime)
 
 	if(_drawWireframe)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL );
+		_graphicsDevice->SetPolygonMode(PolygonMode::Fill());
 	}
 
 	DrawDebugObjects();
@@ -115,19 +115,19 @@ void RenderEngine::Update(GameTime* gameTime)
 }
 void RenderEngine::Shutdown()
 {
-	if(glIsVertexArray(_vertexArrayObject))
+	if(_graphicsDevice->IsVertexArray(_vertexArrayObject))
 	{
-		glDeleteVertexArrays(1,&_vertexArrayObject);
+		_graphicsDevice->DeleteVertexArrays(1, &_vertexArrayObject);
 	}
 	_renderingUpdateStep.clear();
 }
 void RenderEngine::SetClearColor(const Color& color)
 {
-	glClearColor(color._r,color._g,color._b,color._a);
+	_graphicsDevice->SetClearColor(color);
 }
 void RenderEngine::ClearBuffers()
 {
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	_graphicsDevice->ClearBuffers(true, true, false);
 }
 void RenderEngine::SwapBuffers()
 {
@@ -222,9 +222,9 @@ void RenderEngine::SetupDebugDrawingComponents()
 	indices[14] = 3;
 	indices[15] = 7;
 
-	debugVertices = std::unique_ptr<VertexBuffer>(new VertexBuffer(8, vertices, vertices->GetVertexSize()));
-	debugVertices->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, vertices->GetVertexSize(), 0);
-	debugIndices = std::unique_ptr<IndexBuffer>(new IndexBuffer(16, indices));
+	debugVertices = std::unique_ptr<VertexBuffer>(new VertexBuffer(_graphicsDevice, 8, vertices, vertices->GetVertexSize()));
+	debugVertices->AddVertexAttributeInformation(0,3,GraphicsDataType::Float(), false, vertices->GetVertexSize(), 0);
+	debugIndices = std::unique_ptr<IndexBuffer>(new IndexBuffer(_graphicsDevice, 16, indices));
 
 	_resourceManager->StoreAndInitMaterial("debugMaterial", 
 		new DebugMaterial(_resourceManager->GetShaderProgram("DEBUG", "../data/Debug.vert", "../data/Debug.frag")));
@@ -240,21 +240,21 @@ void RenderEngine::DrawDebugObjects()
 	if(_drawDebugObjects)
 	{
 		//DRAW DEBUG OBJECTS
-		debugMaterial->Start();
-		debugMaterial->SetUniforms(_mainCameraComponent);
+		debugMaterial->Start(_graphicsDevice);
+		debugMaterial->SetUniforms(_graphicsDevice, _mainCameraComponent);
 		debugVertices->BindBuffer();
 		debugIndices->BindBuffer();
 		unsigned int numberOfAttributeInformations = debugVertices->GetNumberOfAttributeInfos();
 		for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 		{
 			const VertexAttributeInformation& thisInfo = debugVertices->GetVertexAttributeInformation(i);
-			glEnableVertexAttribArray(thisInfo.GetIndex());
-			glVertexAttribPointer(thisInfo.GetIndex(), 
-								  thisInfo.GetSize(), 
-								  thisInfo.GetType(),
-								  thisInfo.GetIsNormalized(), 
-								  thisInfo.GetStride(), 
-								  thisInfo.GetOffset());
+			_graphicsDevice->EnableVertexAttribute(thisInfo.GetIndex());
+			_graphicsDevice->SetVertexAttribute(thisInfo.GetIndex(), 
+							  thisInfo.GetSize(), 
+							  thisInfo.GetType(),
+							  thisInfo.GetIsNormalized(), 
+							  thisInfo.GetStride(), 
+							  thisInfo.GetOffset());
 		}
 
 		for(unsigned int i = 0; i < _debugBoxes.size(); i++)
@@ -267,11 +267,11 @@ void RenderEngine::DrawDebugObjects()
 		}
 		for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 		{
-			glDisableVertexAttribArray(debugVertices->GetVertexAttributeInformation(i).GetIndex());
+			_graphicsDevice->DisableVertexAttribute(debugVertices->GetVertexAttributeInformation(i).GetIndex());
 		}
 		debugIndices->UnbindBuffer();
 		debugVertices->UnbindBuffer();
-		debugMaterial->End();
+		debugMaterial->End(_graphicsDevice);
 		_debugBoxes.clear();
 	}
 }
@@ -292,10 +292,10 @@ void RenderEngine::DrawBoundingBox(Renderer* object)
 }
 void RenderEngine::DrawBoundingBox()
 {
-	debugMaterial->SetObjectUniforms(debugObject.get());
+	debugMaterial->SetObjectUniforms(_graphicsDevice, debugObject.get());
 
 	//Draw the mesh
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (GLvoid*)(4*sizeof(GLuint)));
-	glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, (GLvoid*)(8*sizeof(GLuint)));
+	_graphicsDevice->DrawElements(GraphicsPrimitiveType::LineLoop(), 4, GraphicsDataType::UnsignedInt(), 0);
+	_graphicsDevice->DrawElements(GraphicsPrimitiveType::LineLoop(), 4, GraphicsDataType::UnsignedInt(), (void*)(4*sizeof(unsigned int)));
+	_graphicsDevice->DrawElements(GraphicsPrimitiveType::Lines(), 8, GraphicsDataType::UnsignedInt(), (void*)(8*sizeof(unsigned int)));
 }

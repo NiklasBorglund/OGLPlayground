@@ -7,13 +7,14 @@
 
 class VertexBuffer;
 class IndexBuffer;
+class GraphicsDevice;
 class CDLODGridMesh
 {
 public:
 	CDLODGridMesh();
 	~CDLODGridMesh();
 
-	void SetDimensions(int dimension);
+	void SetDimensions(GraphicsDevice* graphicsDevice,int dimension);
 	int GetDimensions()const;
 
 	VertexBuffer* GetVertexBuffer()const;
@@ -34,7 +35,7 @@ private:
 	int _endIndexBottomRight;
 	int _numberOfSubmeshIndices;
 
-	void CreateBuffers();
+	void CreateBuffers(GraphicsDevice* graphicsDevice);
 };
 
 #endif //CDLODGRIDMESH_H_INCLUDED

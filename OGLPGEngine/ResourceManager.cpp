@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "FileUtility.h"
 #include "Primitive.h"
+#include "GraphicsDevice.h"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
@@ -16,8 +17,9 @@ ResourceManager::~ResourceManager()
 	Shutdown();
 }
 
-void ResourceManager::Initialize()
+void ResourceManager::Initialize(GraphicsDevice* graphicsDevice)
 {
+	_graphicsDevice = graphicsDevice;
 	//Initialize the font library
 	if(FT_Init_FreeType(&_freeTypeLibrary))
 	{
@@ -65,7 +67,7 @@ ShaderProgram* ResourceManager::GetShaderProgram(std::string name, std::string v
 	{
 		return it->second.get();
 	}
-	ShaderProgram* newProgram = new ShaderProgram(FileUtility::ReadContentsFromFile(vertexShaderPath),
+	ShaderProgram* newProgram = new ShaderProgram(_graphicsDevice, FileUtility::ReadContentsFromFile(vertexShaderPath),
 												  FileUtility::ReadContentsFromFile(fragmentShaderPath));
 	_shaderPrograms.insert(std::pair<std::string, std::unique_ptr<ShaderProgram>>(name, std::unique_ptr<ShaderProgram>(newProgram)));
 
@@ -106,18 +108,18 @@ Mesh* ResourceManager::GetPrimitive(PrimitiveType primitiveType)
 		{
 		case CUBE_PRIMITIVE:
 			{
-				thisMesh = Primitive::CreateCube();
+				thisMesh = Primitive::CreateCube(_graphicsDevice);
 				break;
 			}
 		case PLANE_PRIMITIVE:
 			{
-				thisMesh = Primitive::CreatePlane();
+				thisMesh = Primitive::CreatePlane(_graphicsDevice);
 				break;
 			}
 		default:
 			{
 				//Default in creating/getting a cube
-				thisMesh = Primitive::CreateCube();
+				thisMesh = Primitive::CreateCube(_graphicsDevice);
 				break;
 			}
 		}
@@ -185,11 +187,11 @@ std::vector<Mesh*> ResourceManager::GetModelFromFile(std::string filePath)
 					}
 				}
 
-				VertexBuffer* vertexBuffer = new VertexBuffer(currentMesh->mNumVertices, (VertexContainer*)vertexContainer, vertexContainer->GetVertexSize());
-				vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, vertexContainer->GetVertexSize(), 0);
-				vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, vertexContainer->GetVertexSize(), sizeof(Vector3));
-				vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, vertexContainer->GetVertexSize(), sizeof(Vector3) * 2);
-				IndexBuffer* indexBuffer = new IndexBuffer((currentMesh->mNumFaces * 3), indices);
+				VertexBuffer* vertexBuffer = new VertexBuffer(_graphicsDevice,currentMesh->mNumVertices, (VertexContainer*)vertexContainer, vertexContainer->GetVertexSize());
+				vertexBuffer->AddVertexAttributeInformation(0,3,GraphicsDataType::Float(), false, vertexContainer->GetVertexSize(), 0);
+				vertexBuffer->AddVertexAttributeInformation(1,3,GraphicsDataType::Float(), false, vertexContainer->GetVertexSize(), sizeof(Vector3));
+				vertexBuffer->AddVertexAttributeInformation(2,2,GraphicsDataType::Float(), false, vertexContainer->GetVertexSize(), sizeof(Vector3) * 2);
+				IndexBuffer* indexBuffer = new IndexBuffer(_graphicsDevice,(currentMesh->mNumFaces * 3), indices);
 
 				Mesh* newMesh = new Mesh(vertexBuffer,indexBuffer);
 
@@ -218,7 +220,7 @@ void ResourceManager::StoreAndInitMaterial(std::string name, Material* material)
 	if(material != NULL && !CheckIfMaterialExist(name))
 	{
 		_materials.insert(std::pair<std::string, std::unique_ptr<Material>>(name, std::unique_ptr<Material>(material)));
-		material->Initialize();
+		material->Initialize(_graphicsDevice);
 	}
 }
 bool ResourceManager::CheckIfMaterialExist(std::string name)

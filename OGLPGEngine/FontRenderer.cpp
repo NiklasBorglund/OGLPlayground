@@ -4,50 +4,51 @@
 #include "Material.h"
 #include "VertexDeclarations.h"
 #include "Font.h"
+#include "GraphicsDevice.h"
 
-FontRenderer::FontRenderer(GameObject* owner, Material* material, Font* font, std::string text, ComponentUpdateStep componentUpdateStep): 
+FontRenderer::FontRenderer(GameObject* owner, Material* material, Font* font, std::string text,GraphicsDevice* graphicsDevice, ComponentUpdateStep componentUpdateStep): 
 	Renderer(owner, componentUpdateStep),
 	_material(material), _font(font), _text(text)
 {
 	_vertexBuffer = std::unique_ptr<VertexBuffer>(
-		new VertexBuffer(BufferType::ArrayBuffer(), BufferUsage::DynamicDraw(), sizeof(VertexPosTex),0,0));
-	_vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), 0);
-	_vertexBuffer->AddVertexAttributeInformation(1,2,GL_FLOAT, GL_FALSE, sizeof(VertexPosTex), sizeof(Vector3));
-	_texture = std::unique_ptr<Texture2D>(new Texture2D());
+		new VertexBuffer(graphicsDevice, BufferType::ArrayBuffer(), BufferUsage::DynamicDraw(), sizeof(VertexPosTex),0,0));
+	_vertexBuffer->AddVertexAttributeInformation(0,3,GraphicsDataType::Float(), false, sizeof(VertexPosTex), 0);
+	_vertexBuffer->AddVertexAttributeInformation(1,2,GraphicsDataType::Float(), false, sizeof(VertexPosTex), sizeof(Vector3));
+	_texture = std::unique_ptr<Texture2D>(new Texture2D(graphicsDevice));
 }
 FontRenderer::~FontRenderer()
 {}
 
-void FontRenderer::PreDraw(Camera* currentCameraComponent)
+void FontRenderer::PreDraw(Camera* currentCameraComponent,GraphicsDevice* graphicsDevice)
 {
 	//bind the vertex buffer
-	glActiveTexture( GL_TEXTURE0 );
+	graphicsDevice->SetActiveTexture(0);
 	_texture->BindTexture();
 
-	_material->Start();
-	_material->SetUniforms(currentCameraComponent);
+	_material->Start(graphicsDevice);
+	_material->SetUniforms(graphicsDevice,currentCameraComponent);
 	_vertexBuffer->BindBuffer();
 
 	unsigned int numberOfAttributeInformations = _vertexBuffer->GetNumberOfAttributeInfos();
 	for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 	{
 		const VertexAttributeInformation& thisInfo = _vertexBuffer->GetVertexAttributeInformation(i);
-		glEnableVertexAttribArray(thisInfo.GetIndex());
-		glVertexAttribPointer(thisInfo.GetIndex(), 
+		graphicsDevice->EnableVertexAttribute(thisInfo.GetIndex());
+		graphicsDevice->SetVertexAttribute(thisInfo.GetIndex(), 
 							  thisInfo.GetSize(), 
 							  thisInfo.GetType(),
 							  thisInfo.GetIsNormalized(), 
 							  thisInfo.GetStride(), 
 							  thisInfo.GetOffset());
 	}
-	 glEnable(GL_BLEND);
-     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	 graphicsDevice->EnableGraphicsMode(GraphicsMode::Blend());
+	 graphicsDevice->SetBlendFactor(SourceBlendFactor::SourceAlpha(), DestinationBlendFactor::OneMinusSourceAlpha());
 }
-void FontRenderer::Update(GameTime* gameTime)
+void FontRenderer::Update(GameTime* gameTime, GraphicsDevice* graphicsDevice)
 {
 	int drawCalls = 0;
 	int triangles = 0;
-	_material->SetObjectUniforms(GetGameObject());
+	_material->SetObjectUniforms(graphicsDevice, GetGameObject());
 
 	//int glerror = glGetError();
 	float x = 0;
@@ -64,12 +65,12 @@ void FontRenderer::Update(GameTime* gameTime)
 		//glerror = glGetError();
 		_texture->SetTextureData(
 			0,
-			GL_RED,
+			ColorFormat::Red(),
 			glyph->bitmap.width,
 			glyph->bitmap.rows,
 			0,
-			GL_RED,
-			GL_UNSIGNED_BYTE,
+			ColorFormat::Red(),
+			GraphicsDataType::UnsignedByte(),
 			glyph->bitmap.buffer);
 		//glerror = glGetError();
 		float x2 = x + glyph->bitmap_left;
@@ -85,7 +86,7 @@ void FontRenderer::Update(GameTime* gameTime)
 			VertexPosTex(Vector3(x2 + w,	y2 + h, 0),	Vector2(1,1)),
 		};
 		_vertexBuffer->SetBufferData(4, vertexData);
-		glDrawArrays(GL_TRIANGLE_STRIP,0, _vertexBuffer->GetNumberOfElements());
+		graphicsDevice->DrawArrays(GraphicsPrimitiveType::TriangleStrip(), 0, _vertexBuffer->GetNumberOfElements());
 		drawCalls++;
 		triangles += 2;
 		
@@ -96,18 +97,18 @@ void FontRenderer::Update(GameTime* gameTime)
 	SetNumberOfDrawCalls(drawCalls);
 	SetNumberOfTriangles(triangles);
 }
-void FontRenderer::PostDraw()
+void FontRenderer::PostDraw(GraphicsDevice* graphicsDevice)
 {
-	glDisable(GL_BLEND);
+	 graphicsDevice->DisableGraphicsMode(GraphicsMode::Blend());
 	unsigned int numberOfAttributeInformations = _vertexBuffer->GetNumberOfAttributeInfos();
 	for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 	{
-			glDisableVertexAttribArray(_vertexBuffer->GetVertexAttributeInformation(i).GetIndex());
+		graphicsDevice->DisableVertexAttribute(_vertexBuffer->GetVertexAttributeInformation(i).GetIndex());
 	}
 
 	_texture->UnbindTexture();
 	_vertexBuffer->UnbindBuffer();
-	_material->End();
+	_material->End(graphicsDevice);
 }
 
 void FontRenderer::SetText(const std::string& text)

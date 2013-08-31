@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "GLFWWindow.h"
 #include "Camera.h"
+#include "GraphicsDevice.h"
 
 RenderEngine2D::RenderEngine2D():  _drawCalls(0), _trianglesDrawn(0)
 {
@@ -11,10 +12,11 @@ RenderEngine2D::~RenderEngine2D()
 {
 	Shutdown();
 }
-void RenderEngine2D::Initialize(Camera* camera2DComponent, GLFWWindow* thisWindow)
+void RenderEngine2D::Initialize(Camera* camera2DComponent, GLFWWindow* thisWindow, GraphicsDevice* graphicsDevice)
 {
 	_camera2DComponent = camera2DComponent;
 	_thisWindow = thisWindow;
+	_graphicsDevice = graphicsDevice;
 }
 void RenderEngine2D::Start()
 {
@@ -36,9 +38,9 @@ void RenderEngine2D::Update(GameTime* gameTime)
 	for(unsigned int i = 0; i < _renderingUpdateStep.size(); i++)
 	{	
 		Renderer* currentComponent = _renderingUpdateStep[i];
-		currentComponent->PreDraw(_camera2DComponent);
-		currentComponent->Update(gameTime);//Draw
-		currentComponent->PostDraw();
+		currentComponent->PreDraw(_camera2DComponent, _graphicsDevice);
+		currentComponent->Update(gameTime, _graphicsDevice);//Draw
+		currentComponent->PostDraw(_graphicsDevice);
 		triangles += currentComponent->GetNumberOfTriangles();
 		drawCalls += currentComponent->GetNumberOfDrawCalls();
 	}

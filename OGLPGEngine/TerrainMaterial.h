@@ -2,13 +2,11 @@
 #ifndef TERRAINMATERIAL_H_INCLUDED
 #define TERRAINMATERIAL_H_INCLUDED
 
-#define GLEW_STATIC
-#include <GL\glew.h>
-
 #include "Material.h"
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Texture2D.h"
+#include "GraphicsDevice.h"
 
 class TerrainMaterial : public Material
 {
@@ -35,29 +33,29 @@ public:
 	}
 	virtual ~TerrainMaterial(){}
 
-	virtual void Initialize()
+	virtual void Initialize(GraphicsDevice* graphicsDevice)
 	{
 		const ShaderProgram* program = GetShaderProgram();
-		_viewMatrixID = glGetUniformLocation(program->GetProgram(), "viewMatrix");
-		_projectionMatrixID = glGetUniformLocation(program->GetProgram(), "projectionMatrix");
-		_cameraPositionID = glGetUniformLocation(program->GetProgram(), "cameraPosition");
-		_quadOffsetID = glGetUniformLocation(program->GetProgram(), "quadOffset");
-		_quadScaleID = glGetUniformLocation(program->GetProgram(), "quadScale");
-		_quadWorldMaxID = glGetUniformLocation(program->GetProgram(), "quadWorldMax");
-		_gridDimID = glGetUniformLocation(program->GetProgram(), "gridDim");
-		_terrainScaleID = glGetUniformLocation(program->GetProgram(), "terrainScale");
-		_terrainOffsetID = glGetUniformLocation(program->GetProgram(), "terrainOffset");
-		_samplerWorldToTextureScaleID = glGetUniformLocation(program->GetProgram(), "samplerWorldToTextureScale");
-		_heightMapTextureInfoID = glGetUniformLocation(program->GetProgram(), "heightMapTextureInfo");
-		_lightDirectionID = glGetUniformLocation(program->GetProgram(), "lightDirection");
-		_morphConstsID = glGetUniformLocation(program->GetProgram(), "morphConsts");
-		_diffuseTextureID = glGetUniformLocation(program->GetProgram(), "diffuseTexture");
+		_viewMatrixID = graphicsDevice->GetUniformLocation(program->GetProgram(), "viewMatrix");
+		_projectionMatrixID = graphicsDevice->GetUniformLocation(program->GetProgram(), "projectionMatrix");
+		_cameraPositionID = graphicsDevice->GetUniformLocation(program->GetProgram(), "cameraPosition");
+		_quadOffsetID = graphicsDevice->GetUniformLocation(program->GetProgram(), "quadOffset");
+		_quadScaleID = graphicsDevice->GetUniformLocation(program->GetProgram(), "quadScale");
+		_quadWorldMaxID = graphicsDevice->GetUniformLocation(program->GetProgram(), "quadWorldMax");
+		_gridDimID = graphicsDevice->GetUniformLocation(program->GetProgram(), "gridDim");
+		_terrainScaleID = graphicsDevice->GetUniformLocation(program->GetProgram(), "terrainScale");
+		_terrainOffsetID = graphicsDevice->GetUniformLocation(program->GetProgram(), "terrainOffset");
+		_samplerWorldToTextureScaleID = graphicsDevice->GetUniformLocation(program->GetProgram(), "samplerWorldToTextureScale");
+		_heightMapTextureInfoID = graphicsDevice->GetUniformLocation(program->GetProgram(), "heightMapTextureInfo");
+		_lightDirectionID = graphicsDevice->GetUniformLocation(program->GetProgram(), "lightDirection");
+		_morphConstsID = graphicsDevice->GetUniformLocation(program->GetProgram(), "morphConsts");
+		_diffuseTextureID = graphicsDevice->GetUniformLocation(program->GetProgram(), "diffuseTexture");
 	}
-	virtual void Start()
+	virtual void Start(GraphicsDevice* graphicsDevice)
 	{
 		if(!_isStarted)
 		{
-			glUseProgram(GetShaderProgram()->GetProgram());
+			graphicsDevice->UseShader(GetShaderProgram()->GetProgram());
 			_isStarted = true;
 
 			//Lights - Hardcoded for now
@@ -66,30 +64,30 @@ public:
 			_lightDirection.Normalize();
 		}
 	}
-	virtual void SetUniforms(Camera* thisCamera)
+	virtual void SetUniforms(GraphicsDevice* graphicsDevice, Camera* thisCamera)
 	{
 		if(_isStarted)
 		{
-			glUniformMatrix4fv(_viewMatrixID,1 , GL_FALSE, thisCamera->GetViewMatrix().Pointer());
-			glUniformMatrix4fv(_projectionMatrixID,1 , GL_FALSE, thisCamera->GetProjectionMatrix().Pointer());
-			glUniform3fv(_cameraPositionID,1, thisCamera->GetGameObject()->GetTransform().GetPosition().Pointer());
+			graphicsDevice->SetUniform(_projectionMatrixID,false, thisCamera->GetProjectionMatrix());
+			graphicsDevice->SetUniform(_viewMatrixID,false, thisCamera->GetViewMatrix());
+			graphicsDevice->SetUniform(_cameraPositionID, thisCamera->GetGameObject()->GetTransform().GetPosition());
 
-			glUniform3fv(_lightDirectionID, 1, _lightDirection.Pointer());
+			graphicsDevice->SetUniform(_lightDirectionID, _lightDirection);
 
 			//Texture
-			glActiveTexture( GL_TEXTURE0 );
-			glBindTexture(GL_TEXTURE_2D, _heightTexture->GetTexture());
-			glUniform1i( _diffuseTextureID, 0 );
+			graphicsDevice->SetActiveTexture(0);
+			graphicsDevice->BindTexture(TextureType::Texture2D(), _heightTexture->GetTexture());
+			graphicsDevice->SetUniform(_diffuseTextureID, 0);
 		}
 	}
-	virtual void SetObjectUniforms(GameObject* object)
+	virtual void SetObjectUniforms(GraphicsDevice* graphicsDevice, GameObject* object)
 	{
 	}
-	virtual void End()
+	virtual void End(GraphicsDevice* graphicsDevice)
 	{
 		if(_isStarted)
 		{
-			glUseProgram(0);
+			graphicsDevice->UseShader(0);
 			_isStarted = false;
 		}
 	}

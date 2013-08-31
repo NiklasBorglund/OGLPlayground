@@ -14,12 +14,12 @@ class TerrainMaterial;
 class TerrainRenderer: public Renderer
 {
 public:
-	TerrainRenderer(GameObject* owner, TerrainCDLOD* terrain, TerrainMaterial* terrainMaterial, ComponentUpdateStep componentUpdateStep = ComponentUpdateStep::RenderUpdate());
+	TerrainRenderer(GameObject* owner, TerrainCDLOD* terrain, TerrainMaterial* terrainMaterial,GraphicsDevice* graphicsDevice, ComponentUpdateStep componentUpdateStep = ComponentUpdateStep::RenderUpdate());
 	virtual ~TerrainRenderer();
 
-	virtual void PreDraw(Camera* currentCameraComponent);
-	virtual void Update(GameTime* gameTime); //<---Draw
-	virtual void PostDraw();
+	virtual void PreDraw(Camera* currentCameraComponent, GraphicsDevice* graphicsDevice);
+	virtual void Update(GameTime* gameTime, GraphicsDevice* graphicsDevice); //<---Draw
+	virtual void PostDraw(GraphicsDevice* graphicsDevice);
 	virtual void GetDebugBoundingBoxes(std::vector<DebugBoundingBox>& boxArray);
 
 private:
@@ -31,6 +31,7 @@ private:
 	Vector4 _terrainOffset;
 	Vector2 _samplerWorldToTextureScale;
 	Vector4 _heightMapTextureInfo;
+	Vector4 _morphConsts;
 	CDLODGridMesh _gridMeshes[NumberOfGridMeshes];
 	int _gridDimensions;
 	Vector3 _gridDimensionValues;

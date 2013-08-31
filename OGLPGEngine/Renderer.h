@@ -9,15 +9,16 @@
 #include "GameObject.h"
 
 class Camera;
+class GraphicsDevice;
 class Renderer: public Component
 {
 public:
 	Renderer(GameObject* owner, ComponentUpdateStep updateStep) : Component(owner, updateStep), _numberOfDrawCalls(0), _numberOfTriangles(0){}
 	virtual ~Renderer(){}
 
-	virtual void PreDraw(Camera* currentCameraComponent) = 0;
-	virtual void Update(GameTime* gameTime) = 0; //<---Draw
-	virtual void PostDraw() = 0;
+	virtual void PreDraw(Camera* currentCameraComponent, GraphicsDevice* graphicsDevice) = 0;
+	virtual void Update(GameTime* gameTime, GraphicsDevice* graphicsDevice) = 0; //<---Draw
+	virtual void PostDraw(GraphicsDevice* graphicsDevice) = 0;
 	virtual void GetDebugBoundingBoxes(std::vector<DebugBoundingBox>& boxArray)
 	{
 		boxArray.push_back(DebugBoundingBox(GetScaledBoundingBox(), Color::Gray()));

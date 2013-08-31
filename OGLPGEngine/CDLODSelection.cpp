@@ -183,5 +183,9 @@ Vector4 CDLODSelection::GetMorphConsts(int level)const
 
 	end = end + (start - end) * 0.01f; //lerp
 
-	return Vector4(start, 1.0f / (end- start), end / (end-start),  1.0f / (end- start));
+	return Vector4(
+		start, 
+		1.0f / (end- start), 
+		end / (end-start),  
+		1.0f / (end- start));
 }

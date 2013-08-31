@@ -7,8 +7,9 @@
 #include "TerrainMaterial.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "GraphicsDevice.h"
 
-TerrainRenderer::TerrainRenderer(GameObject* owner, TerrainCDLOD* terrain,TerrainMaterial* terrainMaterial, ComponentUpdateStep componentUpdateStep): 
+TerrainRenderer::TerrainRenderer(GameObject* owner, TerrainCDLOD* terrain,TerrainMaterial* terrainMaterial,GraphicsDevice* graphicsDevice, ComponentUpdateStep componentUpdateStep): 
 	Renderer(owner, componentUpdateStep), _terrain(terrain), _terrainMaterial(terrainMaterial)
 {
 	SetOriginalBoundingBox(Vector3(512, 512, 512), Vector3(512, 512, 512));
@@ -17,7 +18,7 @@ TerrainRenderer::TerrainRenderer(GameObject* owner, TerrainCDLOD* terrain,Terrai
 	int dimension = 2;
 	for(int i = 0; i < NumberOfGridMeshes; i++)
 	{
-		_gridMeshes[i].SetDimensions(dimension);
+		_gridMeshes[i].SetDimensions(graphicsDevice, dimension);
 		dimension *= 2;
 	}
 
@@ -29,10 +30,10 @@ TerrainRenderer::TerrainRenderer(GameObject* owner, TerrainCDLOD* terrain,Terrai
 }
 TerrainRenderer::~TerrainRenderer(){}
 
-void TerrainRenderer::PreDraw(Camera* currentCameraComponent)
+void TerrainRenderer::PreDraw(Camera* currentCameraComponent,GraphicsDevice* graphicsDevice)
 {
-	_terrainMaterial->Start();
-	_terrainMaterial->SetUniforms(currentCameraComponent);
+	_terrainMaterial->Start(graphicsDevice);
+	_terrainMaterial->SetUniforms(graphicsDevice,currentCameraComponent);
 
 	int textureWidth = _terrain->GetCreateDescription()._heightMap->GetSizeX();
 	int textureHeight = _terrain->GetCreateDescription()._heightMap->GetSizeY();
@@ -52,15 +53,15 @@ void TerrainRenderer::PreDraw(Camera* currentCameraComponent)
 									1.0f / (float)textureWidth,
 									1.0f / (float)textureHeight);
 
-	glUniform2fv(_terrainMaterial->_quadWorldMaxID, 1, _quadWorldMax.Pointer());
-	glUniform4fv(_terrainMaterial->_terrainScaleID, 1, _terrainScale.Pointer());
-	glUniform4fv(_terrainMaterial->_terrainOffsetID, 1, _terrainOffset.Pointer());
-	glUniform2fv(_terrainMaterial->_samplerWorldToTextureScaleID, 1, _samplerWorldToTextureScale.Pointer());
-	glUniform4fv(_terrainMaterial->_heightMapTextureInfoID, 1, _heightMapTextureInfo.Pointer());
+	graphicsDevice->SetUniform(_terrainMaterial->_quadWorldMaxID,_quadWorldMax);
+	graphicsDevice->SetUniform(_terrainMaterial->_terrainScaleID,_terrainScale);
+	graphicsDevice->SetUniform(_terrainMaterial->_terrainOffsetID,_terrainOffset);
+	graphicsDevice->SetUniform(_terrainMaterial->_samplerWorldToTextureScaleID,_samplerWorldToTextureScale);
+	graphicsDevice->SetUniform(_terrainMaterial->_heightMapTextureInfoID,_heightMapTextureInfo);
 
 	_terrain->SelectLOD();
 }
-void TerrainRenderer::Update(GameTime* gameTime)
+void TerrainRenderer::Update(GameTime* gameTime,GraphicsDevice* graphicsDevice)
 {
 	//Pick a grid mesh
 	int drawCalls = 0;
@@ -77,14 +78,14 @@ void TerrainRenderer::Update(GameTime* gameTime)
 	IndexBuffer* indexBuffer = gridMesh->GetIndexBuffer();
 	vertexBuffer->BindBuffer();
 	indexBuffer->BindBuffer();
-	_terrainMaterial->SetObjectUniforms(GetGameObject());
+	_terrainMaterial->SetObjectUniforms(graphicsDevice, GetGameObject());
 
 	unsigned int numberOfAttributeInformations = vertexBuffer->GetNumberOfAttributeInfos();
 	for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 	{
 		const VertexAttributeInformation& thisInfo = vertexBuffer->GetVertexAttributeInformation(i);
-		glEnableVertexAttribArray(thisInfo.GetIndex());
-		glVertexAttribPointer(thisInfo.GetIndex(), 
+		graphicsDevice->EnableVertexAttribute(thisInfo.GetIndex());
+		graphicsDevice->SetVertexAttribute(thisInfo.GetIndex(), 
 							  thisInfo.GetSize(), 
 							  thisInfo.GetType(),
 							  thisInfo.GetIsNormalized(), 
@@ -101,10 +102,9 @@ void TerrainRenderer::Update(GameTime* gameTime)
 	_gridDimensionValues = Vector3((float)gridMesh->GetDimensions(),
 									(float)gridMesh->GetDimensions() * 0.5f, 
 									2.0f / (float)gridMesh->GetDimensions());
-	glUniform3fv(_terrainMaterial->_gridDimID, 1, _gridDimensionValues.Pointer());
+	graphicsDevice->SetUniform(_terrainMaterial->_gridDimID, _gridDimensionValues);
 
 	int prevMorphConstLevelSet = -1;
-	Vector4 morphConsts;
 	Vector4 quadScale;
 	Vector4 quadOffset;
 	for(int i = 0; i < selectionCount; i++)
@@ -114,8 +114,8 @@ void TerrainRenderer::Update(GameTime* gameTime)
 		if(prevMorphConstLevelSet != selectedNode._level)
 		{
 			prevMorphConstLevelSet = selectedNode._level;
-			morphConsts = _terrain->GetSelection().GetMorphConsts(prevMorphConstLevelSet);
-			glUniform4fv(_terrainMaterial->_morphConstsID, 1, morphConsts.Pointer());
+			_morphConsts = _terrain->GetSelection().GetMorphConsts(prevMorphConstLevelSet);
+			graphicsDevice->SetUniform(_terrainMaterial->_morphConstsID, _morphConsts);
 		}
 
 		BoundingBox boundingBox = selectedNode.GetBoundingBox(rasterSizeX, rasterSizeY, mapDimensions);
@@ -126,14 +126,13 @@ void TerrainRenderer::Update(GameTime* gameTime)
 							(float)selectedNode._level,
 							boundingBox._halfSize._z * 2,
 							1);
-		glUniform4fv(_terrainMaterial->_quadScaleID, 1, quadScale.Pointer());
+		graphicsDevice->SetUniform(_terrainMaterial->_quadScaleID, quadScale);
 
 		quadOffset = Vector4(bbMin._x,
 							(bbMin._y + bbMax._y) * 0.5f,
 							 bbMin._z,
 							1);
-		glUniform4fv(_terrainMaterial->_quadOffsetID, 1, quadOffset.Pointer());
-
+		graphicsDevice->SetUniform(_terrainMaterial->_quadOffsetID, quadOffset);
 
 		bool drawFull = selectedNode._topLeft && selectedNode._topRight && selectedNode._bottomLeft && selectedNode._bottomRight;
 
@@ -142,7 +141,7 @@ void TerrainRenderer::Update(GameTime* gameTime)
 		int totalIndices = indexBuffer->GetNumberOfElements();
 		if(drawFull)
 		{
-			glDrawElements(GL_TRIANGLES,totalIndices, indexBuffer->GetIndexType(), (GLvoid*)0);
+			graphicsDevice->DrawElements(GraphicsPrimitiveType::Triangles(), totalIndices, indexBuffer->GetIndexDataType(),(void*)0); 
 			drawCalls++;
 			triangles += totalIndices / 3;
 		}
@@ -152,25 +151,25 @@ void TerrainRenderer::Update(GameTime* gameTime)
 
 			if(selectedNode._topLeft)
 			{
-				glDrawElements(GL_TRIANGLES,halfd, indexBuffer->GetIndexType(), (GLvoid*)0);
+				graphicsDevice->DrawElements(GraphicsPrimitiveType::Triangles(), halfd, indexBuffer->GetIndexDataType(),(void*)0); 
 				drawCalls++;
 				triangles += halfd / 3;
 			}
 			if(selectedNode._topRight)
 			{
-				glDrawElements(GL_TRIANGLES,halfd, indexBuffer->GetIndexType(), (GLvoid*)gridMesh->GetEndIndexTopLeft());
+				graphicsDevice->DrawElements(GraphicsPrimitiveType::Triangles(), halfd, indexBuffer->GetIndexDataType(),(void*)gridMesh->GetEndIndexTopLeft()); 
 				drawCalls++;
 				triangles += halfd / 3;
 			}
 			if(selectedNode._bottomLeft)
 			{
-				glDrawElements(GL_TRIANGLES,halfd, indexBuffer->GetIndexType(), (GLvoid*)gridMesh->GetEndIndexTopRight());
+				graphicsDevice->DrawElements(GraphicsPrimitiveType::Triangles(), halfd, indexBuffer->GetIndexDataType(),(void*)gridMesh->GetEndIndexTopRight()); 
 				drawCalls++;
 				triangles += halfd / 3;
 			}
 			if(selectedNode._bottomRight)
 			{
-				glDrawElements(GL_TRIANGLES,halfd, indexBuffer->GetIndexType(), (GLvoid*)gridMesh->GetEndIndexBottomLeft());
+				graphicsDevice->DrawElements(GraphicsPrimitiveType::Triangles(), halfd, indexBuffer->GetIndexDataType(),(void*)gridMesh->GetEndIndexBottomLeft()); 
 				drawCalls++;
 				triangles += halfd / 3;
 			}
@@ -179,16 +178,16 @@ void TerrainRenderer::Update(GameTime* gameTime)
 
 	for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 	{
-		glDisableVertexAttribArray(vertexBuffer->GetVertexAttributeInformation(i).GetIndex());
+		graphicsDevice->DisableVertexAttribute(vertexBuffer->GetVertexAttributeInformation(i).GetIndex());
 	}
 	indexBuffer->UnbindBuffer();
 	vertexBuffer->UnbindBuffer();
 	SetNumberOfDrawCalls(drawCalls);
 	SetNumberOfTriangles(triangles);
 }
-void TerrainRenderer::PostDraw()
+void TerrainRenderer::PostDraw(GraphicsDevice* graphicsDevice)
 {
-	_terrainMaterial->End();
+	_terrainMaterial->End(graphicsDevice);
 }
 void TerrainRenderer::GetDebugBoundingBoxes(std::vector<DebugBoundingBox>& boxArray)
 {

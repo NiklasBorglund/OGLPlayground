@@ -2,14 +2,12 @@
 #ifndef DEBUGMATERIAL_H_INCLUDED
 #define DEBUGMATERIAL_H_INCLUDED
 
-#define GLEW_STATIC
-#include <GL\glew.h>
-
 #include "Material.h"
 #include "ShaderProgram.h."
 #include "Camera.h"
 #include "GameObject.h"
 #include "Color.h"
+#include "GraphicsDevice.h"
 
 class DebugMaterial: public Material
 {
@@ -19,43 +17,43 @@ public:
 	{}
 	virtual ~DebugMaterial(){}
 
-	virtual void Initialize()
+	virtual void Initialize(GraphicsDevice* graphicsDevice)
 	{
 		const ShaderProgram* program = GetShaderProgram();
-		_worldMatrixID = glGetUniformLocation(program->GetProgram(), "worldMatrix");
-		_viewMatrixID = glGetUniformLocation(program->GetProgram(), "viewMatrix");
-		_projectionMatrixID = glGetUniformLocation(program->GetProgram(), "projectionMatrix");
-		_colorID = glGetUniformLocation(program->GetProgram(), "color");
+		_worldMatrixID = graphicsDevice->GetUniformLocation(program->GetProgram(), "worldMatrix");
+		_viewMatrixID = graphicsDevice->GetUniformLocation(program->GetProgram(), "viewMatrix");
+		_projectionMatrixID = graphicsDevice->GetUniformLocation(program->GetProgram(), "projectionMatrix");
+		_colorID = graphicsDevice->GetUniformLocation(program->GetProgram(), "color");
 	}
-	virtual void Start()
+	virtual void Start(GraphicsDevice* graphicsDevice)
 	{
 		if(!_isStarted)
 		{
-			glUseProgram(GetShaderProgram()->GetProgram());
+			graphicsDevice->UseShader(GetShaderProgram()->GetProgram());
 			_isStarted = true;
 		}
 	}
-	virtual void SetUniforms(Camera* thisCamera)
+	virtual void SetUniforms(GraphicsDevice* graphicsDevice,Camera* thisCamera)
 	{
 		if(_isStarted)
 		{
-			glUniformMatrix4fv(_projectionMatrixID,1 , GL_FALSE, thisCamera->GetProjectionMatrix().Pointer());
-			glUniformMatrix4fv(_viewMatrixID, 1 , GL_FALSE, thisCamera->GetViewMatrix().Pointer());
+			graphicsDevice->SetUniform(_projectionMatrixID,false, thisCamera->GetProjectionMatrix());
+			graphicsDevice->SetUniform(_viewMatrixID,false, thisCamera->GetViewMatrix());
 		}
 	}
-	virtual void SetObjectUniforms(GameObject* object)
+	virtual void SetObjectUniforms(GraphicsDevice* graphicsDevice,GameObject* object)
 	{
 		if(_isStarted)
 		{
-			glUniform4fv(_colorID, 1, _color.Pointer()); //want to be able to change color per object
-			glUniformMatrix4fv(_worldMatrixID,1 , GL_FALSE, object->GetTransform().GetWorldMatrix().Pointer());
+			graphicsDevice->SetUniform(_colorID, _color);
+			graphicsDevice->SetUniform(_worldMatrixID,false, object->GetTransform().GetWorldMatrix());
 		}
 	}
-	virtual void End()
+	virtual void End(GraphicsDevice* graphicsDevice)
 	{
 		if(_isStarted)
 		{
-			glUseProgram(0);
+			graphicsDevice->UseShader(0);
 			_isStarted = false;
 		}
 	}

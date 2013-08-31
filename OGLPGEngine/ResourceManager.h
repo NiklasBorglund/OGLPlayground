@@ -19,12 +19,13 @@ enum PrimitiveType
 	PLANE_PRIMITIVE = 2,
 };
 
+class GraphicsDevice;
 class ResourceManager
 {
 public:
 	ResourceManager();
 	~ResourceManager();
-	void Initialize();
+	void Initialize(GraphicsDevice* graphicsDevice);
 	void Shutdown();
 
 	Texture2D* GetTexture2D(std::string filePath);
@@ -49,5 +50,6 @@ private:
 	std::map<std::string, std::vector<Mesh*>> _models;
 	std::map<std::string, std::vector<Mesh*>> _terrain;
 	FT_Library _freeTypeLibrary;
+	GraphicsDevice* _graphicsDevice;
 };
 #endif //RESOURCEMANAGER_H_INCLUDED

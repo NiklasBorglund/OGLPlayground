@@ -23,7 +23,7 @@ uniform sampler2D diffuseTexture;
 out vec2 texCoordOut;
 out float lightingFactor;
 
-// returns baseVertexPos where: xy are true values, z is g_quadOffset.z which is z center of the AABB
+// returns baseVertexPos where: xy are true values, z is g_quadOffset.z which is z ce18:55 2013-08-24nter of the AABB
 vec4 getBaseVertexPos( vec4 inPosition )
 {
    vec4 returnValue = inPosition * quadScale + quadOffset;
@@ -109,10 +109,11 @@ void main()
   unmorphedWorldPosition = vertex;
   unmorphedWorldPosition.w = 1;
 
-  eyeDistance = distance(vertex.xyz,normalize(cameraPosition));
+  eyeDistance = distance(vertex.xyz,cameraPosition);
   float morphLerpValue = 1.0 - clamp(morphConsts.z - eyeDistance * morphConsts.w, 0.0, 1.0);
 
   vertex.xz = morphVertex(vec4(position,1.0), vertex.xz, morphLerpValue);
+  //vertex.xz = morphVertex(vertex, vertex.xz, morphLerpValue);
 
   globalUV = calculateGlobalUV(vertex.xz);
   vertex.y = sampleHeightmap(globalUV, 0) * terrainScale.y + terrainOffset.y; 

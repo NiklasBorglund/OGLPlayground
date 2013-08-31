@@ -8,6 +8,7 @@
 #include "VertexBuffer.h"
 #include "Texture2D.h"
 #include "Matrix4x4.h"
+#include "GraphicsDevice.h"
 
 #include <algorithm>
 
@@ -34,7 +35,7 @@ void TerrainHeightMap::Clear()
 	}
 	_terrainMeshes.clear();
 }
-void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
+void TerrainHeightMap::CreateHeightMap(GraphicsDevice* graphicsDevice,Texture2D* heightMap, int patchSize)
 {
 	Clear();
 
@@ -132,16 +133,16 @@ void TerrainHeightMap::CreateHeightMap(Texture2D* heightMap, int patchSize)
 			}
 			
 			int vertexSize = vertexContainer->GetVertexSize();
-			VertexBuffer* vertexBuffer = new VertexBuffer(patchVertices, (VertexContainer*)vertexContainer, vertexSize);
-			vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, vertexSize, 0);
-			vertexBuffer->AddVertexAttributeInformation(1,3,GL_FLOAT, GL_FALSE, vertexSize, sizeof(Vector3));
-			vertexBuffer->AddVertexAttributeInformation(2,2,GL_FLOAT, GL_FALSE, vertexSize, sizeof(Vector3) * 2);
-			IndexBuffer* indexBuffer = new IndexBuffer(patchIndices, indices);
+			VertexBuffer* vertexBuffer = new VertexBuffer(graphicsDevice, patchVertices, (VertexContainer*)vertexContainer, vertexSize);
+			vertexBuffer->AddVertexAttributeInformation(0,3,GraphicsDataType::Float(), false, vertexSize, 0);
+			vertexBuffer->AddVertexAttributeInformation(1,3,GraphicsDataType::Float(), false, vertexSize, sizeof(Vector3));
+			vertexBuffer->AddVertexAttributeInformation(2,2,GraphicsDataType::Float(), false, vertexSize, sizeof(Vector3) * 2);
+			IndexBuffer* indexBuffer = new IndexBuffer(graphicsDevice, patchIndices, indices);
 
 			Mesh* terrainMesh = new Mesh(vertexBuffer, indexBuffer);
 			//Test with bounding boxes
-			int halfPatchX = patchX + ((patchSize) / 2.0f);
-			int halfPatchY = patchY + ((patchSize) / 2.0f);
+			int halfPatchX = (int)(patchX + ((patchSize) / 2.0f));
+			int halfPatchY = (int)(patchY + ((patchSize) / 2.0f));
 			Vector3 boxSize = Vector3(patchSize * 0.5f, highValue * 0.5f, patchSize * 0.5f);
 			Vector3 boxPosition = patchOrigin + boxSize;
 			terrainMesh->SetBoundingBox(boxPosition, boxSize);

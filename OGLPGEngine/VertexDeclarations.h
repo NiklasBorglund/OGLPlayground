@@ -2,9 +2,6 @@
 #ifndef VERTEXDECLARATIONS_H_INCLUDED
 #define VERTEXDECLARATIONS_H_INCLUDED
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -40,7 +37,7 @@ public:
 	virtual ~VertexContainer(){}
 
 	virtual size_t GetVertexSize() = 0;
-	virtual GLvoid* GetData()= 0;
+	virtual void* GetData()= 0;
 };
 class VertexPosContainer : public VertexContainer
 {
@@ -56,9 +53,9 @@ public:
 			delete [] _vertices;
 		}
 	}
-	virtual GLvoid* GetData()
+	virtual void* GetData()
 	{
-		return (GLvoid*)_vertices;
+		return (void*)_vertices;
 	}
 	virtual size_t GetVertexSize()
 	{
@@ -86,9 +83,9 @@ public:
 			delete [] _vertices;
 		}
 	}
-	virtual GLvoid* GetData()
+	virtual void* GetData()
 	{
-		return (GLvoid*)_vertices;
+		return (void*)_vertices;
 	}
 	virtual size_t GetVertexSize()
 	{
@@ -116,9 +113,9 @@ public:
 			delete [] _vertices;
 		}
 	}
-	virtual GLvoid* GetData()
+	virtual void* GetData()
 	{
-		return (GLvoid*)_vertices;
+		return (void*)_vertices;
 	}
 	virtual size_t GetVertexSize()
 	{

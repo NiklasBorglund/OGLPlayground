@@ -132,6 +132,21 @@ void CDLODQuadTree::Select(CDLODSelection& selection)const
 
 		previousPosition = selection.GetMorphStartRange(i);
 	}
+	//TODO:: TEMP
+	/*
+	float _morphStart[CDLODSettings::MaxLevelCount];
+	float _morphEnd[CDLODSettings::MaxLevelCount];
+	for(int i = 0; i < layerCount; i++)
+	{
+		_morphStart[i] = selection.GetMorphStartRange(i);
+		_morphEnd[i] = selection.GetMorphEndRange(i);
+	}
+	for(int i = 0; i < layerCount; i++)
+	{
+		selection.SetMorphStartValueAt(i, _morphEnd[i]);
+		selection.SetMorphEndValueAt(i, _morphStart[i]);
+	}
+	*/
 
 	//Select the nodes
 	for(int y = 0; y < _topNodeCountY; y++)
@@ -167,6 +182,8 @@ void CDLODQuadTree::Select(CDLODSelection& selection)const
 	{
 		selection.SortSelectedNodesByDistance();
 	}
+	//TODO: REMOVE
+	int hej = 0;
 }
 int CDLODQuadTree::GetRasterSizeX()const
 {

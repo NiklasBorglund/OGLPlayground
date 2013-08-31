@@ -2,8 +2,6 @@
 #ifndef FONTRENDERER_H_INCLUDED
 #define FONTRENDERER_H_INCLUDED
 
-#define GLEW_STATIC
-#include <GL/glew.h>
 
 #include <memory>
 #include <string>
@@ -18,12 +16,12 @@ class FontRenderer: public Renderer
 {
 public:
 	FontRenderer(GameObject* owner, Material* material, Font* font,
-		std::string text, ComponentUpdateStep componentUpdateStep = ComponentUpdateStep::Render2DUpdate());
+		std::string text,GraphicsDevice* graphicsDevice, ComponentUpdateStep componentUpdateStep = ComponentUpdateStep::Render2DUpdate());
 	virtual ~FontRenderer();
 
-	virtual void PreDraw(Camera* currentCameraComponent);
-	virtual void Update(GameTime* gameTime); //<---Draw
-	virtual void PostDraw();
+	virtual void PreDraw(Camera* currentCameraComponent, GraphicsDevice* graphicsDevice);
+	virtual void Update(GameTime* gameTime, GraphicsDevice* graphicsDevice); //<---Draw
+	virtual void PostDraw(GraphicsDevice* graphicsDevice);
 
 	void SetText(const std::string& text);
 private:

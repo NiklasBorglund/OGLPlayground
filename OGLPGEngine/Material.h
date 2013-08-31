@@ -7,17 +7,18 @@
 class GameObject;
 class ShaderProgram;
 class Camera;
+class GraphicsDevice;
 class Material
 {
 public:
 	Material(ShaderProgram* shaderProgram);
 	virtual ~Material();
 
-	virtual void Initialize() = 0;
-	virtual void Start() = 0;
-	virtual void SetUniforms(Camera* thisCamera) = 0;
-	virtual void SetObjectUniforms(GameObject* object) = 0;
-	virtual void End() = 0;
+	virtual void Initialize(GraphicsDevice* graphicsDevice) = 0;
+	virtual void Start(GraphicsDevice* graphicsDevice) = 0;
+	virtual void SetUniforms(GraphicsDevice* graphicsDevice, Camera* thisCamera) = 0;
+	virtual void SetObjectUniforms(GraphicsDevice* graphicsDevice, GameObject* object) = 0;
+	virtual void End(GraphicsDevice* graphicsDevice) = 0;
 
 	const ShaderProgram* Material::GetShaderProgram();
 private:

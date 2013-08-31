@@ -306,6 +306,9 @@
     <ClInclude Include="CDLODGridMesh.h">
       <Filter>Header Files\Engine\Rendering\Terrain\CDLOD</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsDevice.h">
+      <Filter>Header Files\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="CDLODGridMesh.cpp">
       <Filter>Source Files\Engine\Rendering\Terrain\CDLOD</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice.cpp">
+      <Filter>Source Files\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

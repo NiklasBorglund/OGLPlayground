@@ -1,20 +1,20 @@
 //Buffer.cpp
 #include "Buffer.h"
-Buffer::Buffer(BufferType bufferType, BufferUsage bufferUsage, 
+Buffer::Buffer(GraphicsDevice* graphicsDevice,BufferType bufferType, BufferUsage bufferUsage, 
 			   unsigned int elementSize, unsigned int numberOfElements, 
-			   GLvoid* bufferData): 
-			   _bufferType(bufferType.GetBufferType()), _bufferUsage(bufferUsage.GetBufferUsage()),
+			   GLvoid* bufferData): _graphicsDevice(graphicsDevice),
+			   _bufferType(bufferType), _bufferUsage(bufferUsage),
 			   _buffer(0), _stride(0), 
 			   _elementSize(elementSize), _numberOfElements(numberOfElements)
 {
 	//Generate the buffer
-	glGenBuffers(1, &_buffer);
+	_graphicsDevice->GenerateBuffers(1, &_buffer);
     
 	//Bind the buffer to the context
 	BindBuffer();
 
 	//Set the buffer data
-	glBufferData(_bufferType, (_elementSize * _numberOfElements), bufferData, _bufferUsage);
+	_graphicsDevice->SetBufferData(_bufferType, (_elementSize * _numberOfElements), bufferData, _bufferUsage);
 
 	//Unbind the buffer
 	UnbindBuffer();
@@ -23,15 +23,15 @@ Buffer::~Buffer()
 {
 	if(IsBuffer())
 	{
-		glDeleteBuffers(1, &_buffer);
+		_graphicsDevice->DeleteBuffers(1, &_buffer);
 	}
 }
 
-const GLuint Buffer::GetBuffer()const
+const unsigned int Buffer::GetBuffer() const
 {
 	return this->_buffer;
 }
-const GLenum Buffer::GetBufferType()const
+const BufferType Buffer::GetBufferType()const
 {
 	return this->_bufferType;
 }
@@ -49,22 +49,22 @@ unsigned int Buffer::GetNumberOfElements()const
 }
 void Buffer::BindBuffer()
 {
-	glBindBuffer(_bufferType, _buffer);
+	_graphicsDevice->BindBuffer(_bufferType, _buffer);
 }
 void Buffer::UnbindBuffer()
 {
-	glBindBuffer(_bufferType, 0);
+	_graphicsDevice->BindBuffer(_bufferType, 0);
 }
 //Make sure that the buffer settings are correct before using this
 //And that the buffer is bound to the context
-void Buffer::SetBufferData(int numberOfElements, GLvoid* bufferData)
+void Buffer::SetBufferData(int numberOfElements, void* bufferData)
 {
 	_numberOfElements = numberOfElements;
-	glBufferData(_bufferType, (_elementSize * _numberOfElements), bufferData, _bufferUsage);
+	_graphicsDevice->SetBufferData(_bufferType, (_elementSize * _numberOfElements), bufferData, _bufferUsage);
 }
 bool Buffer::IsBuffer()const
 {
-	return glIsBuffer(_buffer)? true : false;
+	return _graphicsDevice->IsBuffer(_buffer);
 }
 void Buffer::SetStride(unsigned int stride)
 {

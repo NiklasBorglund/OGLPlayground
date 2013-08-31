@@ -13,10 +13,10 @@ CDLODGridMesh::CDLODGridMesh(): _dimensions(0), _endIndexTopLeft(0), _endIndexTo
 CDLODGridMesh::~CDLODGridMesh()
 {
 }
-void CDLODGridMesh::SetDimensions(int dimension)
+void CDLODGridMesh::SetDimensions(GraphicsDevice* graphicsDevice, int dimension)
 {
 	_dimensions = dimension;
-	CreateBuffers();
+	CreateBuffers(graphicsDevice);
 }
 int CDLODGridMesh::GetDimensions()const
 {
@@ -47,7 +47,7 @@ int CDLODGridMesh::GetEndIndexBottomRight()const
 	return _endIndexBottomRight;
 }
 
-void CDLODGridMesh::CreateBuffers()
+void CDLODGridMesh::CreateBuffers(GraphicsDevice* graphicsDevice)
 {
 	if(_dimensions <= 0)
 	{
@@ -74,8 +74,8 @@ void CDLODGridMesh::CreateBuffers()
 			vertices->GetVertex(x + vertexDimension * y)._position = Vector3(x / (float)gridDimension, 0, y / (float)gridDimension);
 		}
 	}
-	_vertexBuffer = std::unique_ptr<VertexBuffer>(new VertexBuffer(totalVertices, vertices, sizeof(VertexPos)));
-	_vertexBuffer->AddVertexAttributeInformation(0,3,GL_FLOAT, GL_FALSE, vertices->GetVertexSize(), 0);
+	_vertexBuffer = std::unique_ptr<VertexBuffer>(new VertexBuffer(graphicsDevice, totalVertices, vertices, sizeof(VertexPos)));
+	_vertexBuffer->AddVertexAttributeInformation(0,3,GraphicsDataType::Float(), false, vertices->GetVertexSize(), 0);
 
 	GLuint* indices = new GLuint[totalIndices];
 	int index = 0;
@@ -145,7 +145,7 @@ void CDLODGridMesh::CreateBuffers()
 	_endIndexBottomRight = index;
 
 	//Create the indexBuffer
-	_indexBuffer = std::unique_ptr<IndexBuffer>(new IndexBuffer(totalIndices, indices));
+	_indexBuffer = std::unique_ptr<IndexBuffer>(new IndexBuffer(graphicsDevice,totalIndices, indices));
 }
 
 int CDLODGridMesh::GetNumberOfSubMeshIndices()const

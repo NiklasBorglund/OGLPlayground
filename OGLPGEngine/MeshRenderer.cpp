@@ -5,6 +5,7 @@
 #include "Mesh.h"
 #include "Material.h"
 #include "Camera.h"
+#include "GraphicsDevice.h"
 
 MeshRenderer::MeshRenderer(GameObject* owner, Mesh* mesh, Material* material, ComponentUpdateStep componentUpdateStep):
 	Renderer(owner, componentUpdateStep),_mesh(mesh), _material(material)
@@ -13,13 +14,13 @@ MeshRenderer::MeshRenderer(GameObject* owner, Mesh* mesh, Material* material, Co
 }
 MeshRenderer::~MeshRenderer(){}
 
-void MeshRenderer::PreDraw(Camera* currentCameraComponent)
+void MeshRenderer::PreDraw(Camera* currentCameraComponent,GraphicsDevice* graphicsDevice)
 {
-	_material->Start();
-	_material->SetUniforms(currentCameraComponent);
+	_material->Start(graphicsDevice);
+	_material->SetUniforms(graphicsDevice, currentCameraComponent);
 }
 
-void MeshRenderer::Update(GameTime* gameTime)
+void MeshRenderer::Update(GameTime* gameTime,GraphicsDevice* graphicsDevice)
 {
 	int drawCalls = 0;
 	int triangles = 0;
@@ -29,7 +30,7 @@ void MeshRenderer::Update(GameTime* gameTime)
 		IndexBuffer* indexBuffer = _mesh->GetIndexBuffer();
 		
 		//Set the per object uniforms of the game object(for example - the world matrix)
-		_material->SetObjectUniforms(GetGameObject());
+		_material->SetObjectUniforms(graphicsDevice, GetGameObject());
 
 		vertexBuffer->BindBuffer();
 		//Draw the mesh
@@ -37,25 +38,25 @@ void MeshRenderer::Update(GameTime* gameTime)
 		for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 		{
 			const VertexAttributeInformation& thisInfo = vertexBuffer->GetVertexAttributeInformation(i);
-			glEnableVertexAttribArray(thisInfo.GetIndex());
-			glVertexAttribPointer(thisInfo.GetIndex(), 
-								  thisInfo.GetSize(), 
-								  thisInfo.GetType(),
-								  thisInfo.GetIsNormalized(), 
-								  thisInfo.GetStride(), 
-								  thisInfo.GetOffset());
+			graphicsDevice->EnableVertexAttribute(thisInfo.GetIndex());
+			graphicsDevice->SetVertexAttribute(thisInfo.GetIndex(), 
+							  thisInfo.GetSize(), 
+							  thisInfo.GetType(),
+							  thisInfo.GetIsNormalized(), 
+							  thisInfo.GetStride(), 
+							  thisInfo.GetOffset());
 		}
 
 		//Bind the index buffer
 		indexBuffer->BindBuffer();
 		//DRAW
-		glDrawElements(GL_TRIANGLES,indexBuffer->GetNumberOfElements(), indexBuffer->GetIndexType(), (GLvoid*)0);
+		graphicsDevice->DrawElements(GraphicsPrimitiveType::Triangles(), indexBuffer->GetNumberOfElements(), indexBuffer->GetIndexDataType(), (void*)0);
 		drawCalls++;
 		triangles += indexBuffer->GetNumberOfElements() / 3;
 
 		for(unsigned int i = 0; i < numberOfAttributeInformations; i++)
 		{
-			glDisableVertexAttribArray(vertexBuffer->GetVertexAttributeInformation(i).GetIndex());
+			graphicsDevice->DisableVertexAttribute(vertexBuffer->GetVertexAttributeInformation(i).GetIndex());
 		}
 		indexBuffer->UnbindBuffer();
 		vertexBuffer->UnbindBuffer();
@@ -64,7 +65,7 @@ void MeshRenderer::Update(GameTime* gameTime)
 	SetNumberOfTriangles(triangles);
 }
 
-void MeshRenderer::PostDraw()
+void MeshRenderer::PostDraw(GraphicsDevice* graphicsDevice)
 {
-	_material->End();
+	_material->End(graphicsDevice);
 }

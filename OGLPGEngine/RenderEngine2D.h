@@ -8,13 +8,14 @@ class GameTime;
 class Renderer;
 class Camera;
 class GLFWWindow;
+class GraphicsDevice;
 class RenderEngine2D
 {
 public:
 	RenderEngine2D();
 	~RenderEngine2D();
 
-	void Initialize(Camera* camera2DComponent, GLFWWindow* thisWindow);
+	void Initialize(Camera* camera2DComponent, GLFWWindow* thisWindow, GraphicsDevice* graphicsDevice);
 
 	void Start();
 	void Update(GameTime* gameTime);
@@ -29,6 +30,7 @@ private:
 	std::vector<Renderer*> _renderingUpdateStep;
 	int _drawCalls;
 	int _trianglesDrawn;
+	GraphicsDevice* _graphicsDevice;
 
 	//Weak pointers to the window and the 2D camera
 	GLFWWindow* _thisWindow;

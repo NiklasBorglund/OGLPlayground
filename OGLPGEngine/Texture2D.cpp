@@ -1,62 +1,63 @@
 //Texture2D.cpp
 #include "Texture2D.h"
 #include "SOIL.h"
+#include "GraphicsDevice.h"
 
-Texture2D::Texture2D()
+Texture2D::Texture2D(GraphicsDevice* graphicsDevice): _graphicsDevice(graphicsDevice)
 {
-	//Generate the texture
-	glGenTextures(1, &_texture);
 
+	//Generate the texture
+	_graphicsDevice->GenerateTextures(1, &_texture);
 	BindTexture();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	_graphicsDevice->SetTextureParameter(TextureType::Texture2D(), TextureParameterType::TextureWrapS(), TextureParameterValue::ClampToEdge());
+	_graphicsDevice->SetTextureParameter(TextureType::Texture2D(), TextureParameterType::TextureWrapT(), TextureParameterValue::ClampToEdge());
+	_graphicsDevice->SetTextureParameter(TextureType::Texture2D(), TextureParameterType::TextureMinFilter(), TextureParameterValue::Linear());
+	_graphicsDevice->SetTextureParameter(TextureType::Texture2D(), TextureParameterType::TextureMagFilter(), TextureParameterValue::Linear());
+
+	_graphicsDevice->SetPixelStorageType(PixelStorageType::UnpackAligment(), 1);
 	UnbindTexture();
 }
 Texture2D::Texture2D(std::string filePath):_name(filePath)
 {
-	Initialize(filePath, GL_LINEAR, GL_LINEAR, false);
+	Initialize(filePath, TextureParameterValue::Linear(), TextureParameterValue::Linear(), false);
 }
-Texture2D::Texture2D(std::string filePath, GLenum minFilter, GLenum magFilter, bool generateMipMaps):_name(filePath)
+Texture2D::Texture2D(std::string filePath, TextureParameterValue minFilter, TextureParameterValue magFilter, bool generateMipMaps):_name(filePath)
 {
 	Initialize(filePath, minFilter, magFilter, generateMipMaps);
 }
 Texture2D::~Texture2D()
 {
-	if(glIsTexture(_texture))
+	if(_graphicsDevice->IsTexture(_texture))
 	{
-		glDeleteTextures(1, &_texture);
+		_graphicsDevice->DeleteTextures(1, &_texture);
 	}
 }
-void Texture2D::Initialize(std::string filePath, GLenum minFilter, GLenum magFilter, bool generateMipMaps)
+void Texture2D::Initialize(std::string filePath, TextureParameterValue minFilter, TextureParameterValue magFilter, bool generateMipMaps)
 {
 	//Really basic image loading
 	unsigned char* textureData = SOIL_load_image(_name.c_str(), &_width, &_height, &_channels, SOIL_LOAD_AUTO);
 	if(textureData)
 	{
-		if(!glIsTexture(_texture))
+		if(!_graphicsDevice->IsTexture(_texture))
 		{
-			//Generate the texture
-			glGenTextures(1, &_texture);
+			_graphicsDevice->GenerateTextures(1, &_texture);
 		}
 
 		//Bind it to the context
 		BindTexture();
 
-		GLenum format = _channels == 4 ? GL_RGBA : GL_RGB;
+		ColorFormat format = _channels == 4 ? ColorFormat::RGBA() : ColorFormat::RGB();
 
 		if(generateMipMaps)
 		{
-			glGenerateMipmap(GL_TEXTURE_2D);
+			_graphicsDevice->GenerateMipMap(TextureType::Texture2D());
 		}
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+		_graphicsDevice->SetTextureParameter(TextureType::Texture2D(), TextureParameterType::TextureMinFilter(), minFilter);
+		_graphicsDevice->SetTextureParameter(TextureType::Texture2D(), TextureParameterType::TextureMagFilter(), magFilter);
 
-		glTexImage2D( GL_TEXTURE_2D, 0, format, _width, _height, 0, format,
-			GL_UNSIGNED_BYTE, textureData );
+		_graphicsDevice->SetTextureData(TextureType::Texture2D(), 0, format,_width, _height,0, format, GraphicsDataType::UnsignedByte(), textureData);
 
 		//clean up
 		SOIL_free_image_data(textureData);
@@ -87,28 +88,27 @@ int Texture2D::GetChannels()const
 }
 void Texture2D::BindTexture()
 {
-	glBindTexture(GL_TEXTURE_2D, _texture);
+	_graphicsDevice->BindTexture(TextureType::Texture2D(), _texture);
 }
 void Texture2D::UnbindTexture()
 {
-	glBindTexture(GL_TEXTURE_2D, 0);
+	_graphicsDevice->BindTexture(TextureType::Texture2D(), 0);
 }
 //Make sure the texture is bound
-void Texture2D::SetTextureData(GLint level, GLenum internalFormat, int width, int height, GLint border, 
-					GLenum format, GLenum type, const GLvoid* pixels)
+void Texture2D::SetTextureData(GLint level, ColorFormat internalFormat, int width, int height, int border, 
+					ColorFormat format, GraphicsDataType type, const void* pixels)
 {
 	_width = width;
 	_height = height;
-	glTexImage2D( GL_TEXTURE_2D, level, internalFormat, _width, _height, border, format,
-			type, pixels);
+	_graphicsDevice->SetTextureData(TextureType::Texture2D(), level, internalFormat,_width, _height,border, format, type, pixels);
 }
 std::vector<Color> Texture2D::GetImageData()
 {
 	std::vector<Color> imageData;
 	GLuint* image = new GLuint[_width * _height];
-	glBindTexture(GL_TEXTURE_2D, _texture);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, (GLvoid*)image);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	BindTexture();
+	_graphicsDevice->GetTextureImage(TextureType::Texture2D(), 0, ColorFormat::RGBA(), GraphicsDataType::UnsignedInt_8_8_8_8(), image);
+	UnbindTexture();
 	for(int i = 0; i < (_width * _height); i++)
 	{
 		GLuint value = image[i];
@@ -125,9 +125,9 @@ std::vector<GLubyte> Texture2D::GetImageDataRedColor()
 {
 	std::vector<GLubyte> imageData;
 	GLuint* image = new GLuint[_width * _height];
-	glBindTexture(GL_TEXTURE_2D, _texture);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, (GLvoid*)image);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	BindTexture();
+	_graphicsDevice->GetTextureImage(TextureType::Texture2D(), 0, ColorFormat::RGBA(), GraphicsDataType::UnsignedInt_8_8_8_8(), image);
+	UnbindTexture();
 	for(int i = 0; i < (_width * _height); i++)
 	{
 		imageData.push_back(((image[i] & 0xFF000000) >> 24));

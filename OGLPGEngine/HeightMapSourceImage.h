@@ -44,7 +44,7 @@ public:
 	}
 private:
 	Texture2D* _heightmapImage;
-	std::vector<GLubyte> _heightData;
+	std::vector<unsigned char> _heightData;
 
 };
 #endif //HEIGHTMAPSOURCEIMAGE_H_INCLUDED

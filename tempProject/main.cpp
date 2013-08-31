@@ -79,7 +79,7 @@ int main()
 
 	TerrainCDLOD terrain((Camera*)newManager.GetMainCameraObject()->GetComponent(typeid(Camera)),resourceManager->GetTexture2D("data/heightmap4.bmp"));
 	GameObject* terrainObject = new GameObject();
-	terrainObject->AddComponent(new TerrainRenderer(terrainObject, &terrain, (TerrainMaterial*)resourceManager->GetMaterial("TerrainMaterial")));
+	terrainObject->AddComponent(new TerrainRenderer(terrainObject, &terrain, (TerrainMaterial*)resourceManager->GetMaterial("TerrainMaterial"),newManager.GetGraphicsDevice()));
 	newManager.AddGameObject(terrainObject);
 	
 	
