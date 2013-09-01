@@ -115,8 +115,8 @@ void TerrainRenderer::Update(GameTime* gameTime,GraphicsDevice* graphicsDevice)
 		{
 			prevMorphConstLevelSet = selectedNode._level;
 			_morphConsts = _terrain->GetSelection().GetMorphConsts(prevMorphConstLevelSet);
-			graphicsDevice->SetUniform(_terrainMaterial->_morphConstsID, _morphConsts);
 		}
+		graphicsDevice->SetUniform(_terrainMaterial->_morphConstsID, _morphConsts);
 
 		BoundingBox boundingBox = selectedNode.GetBoundingBox(rasterSizeX, rasterSizeY, mapDimensions);
 		Vector3 bbMin = boundingBox.Min();

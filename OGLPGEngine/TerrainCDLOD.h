@@ -12,7 +12,7 @@ class Texture2D;
 class TerrainCDLOD
 {
 public:
-	TerrainCDLOD(Camera* cameraComponent, Texture2D* heightMap, int renderGridResolution = 2);
+	TerrainCDLOD(Camera* cameraComponent, Texture2D* heightMap, int renderGridResolution = 4);
 	~TerrainCDLOD();
 
 	void SelectLOD();

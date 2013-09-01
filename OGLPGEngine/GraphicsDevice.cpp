@@ -40,7 +40,7 @@ void GraphicsDevice::SetUniform(const int uniformLocation, bool transpose, const
 {
 	glUniformMatrix4fv(uniformLocation,1, transpose, uniformValue.Pointer());
 }
-void GraphicsDevice::SetUniform(const int uniformLocation, const int& uniformValue)const
+void GraphicsDevice::SetUniform(const int uniformLocation, const int uniformValue)const
 {
 	glUniform1i(uniformLocation,uniformValue);
 }
@@ -257,7 +257,6 @@ void GraphicsDevice::ClearBuffers(const unsigned int bitMask)const
 }
 void GraphicsDevice::ClearBuffers(bool color,bool depth,bool stencil)const
 {
-	//I have to change this method to something better
 	unsigned int bitMask = 0;
 	if(color)
 	{
@@ -265,19 +264,18 @@ void GraphicsDevice::ClearBuffers(bool color,bool depth,bool stencil)const
 	}
 	if(depth)
 	{
-		if(bitMask = 0)
+		if(bitMask == 0)
 		{
 			bitMask = GL_DEPTH_BUFFER_BIT;
 		}
 		else
 		{
-			//TEMP fix
-			bitMask  = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+			bitMask  |= GL_DEPTH_BUFFER_BIT;
 		}
 	}
 	if(stencil)
 	{
-		if(bitMask = 0)
+		if(bitMask == 0)
 		{
 			bitMask = GL_STENCIL_BUFFER_BIT;
 		}

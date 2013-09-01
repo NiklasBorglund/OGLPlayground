@@ -36,6 +36,8 @@ vec2 morphVertex(vec4 inPosition, vec2 vertex, float morphLerpValue)
 {
   vec2 decimals = (fract(inPosition.xz * vec2(gridDim.y, gridDim.y)) * vec2(gridDim.z, gridDim.z)) * quadScale.xz;
   return vertex.xy - decimals * morphLerpValue;
+  //vec2 decimals = (fract(inPosition.xz * vec2(gridDim.x, gridDim.x) * 0.5) * 1.0 / vec2(gridDim.x, gridDim.x)); 
+  //return vertex.xy - decimals * quadScale.xz * morphLerpValue;
 }
 
 //Calculate the global texture coordinates
@@ -113,7 +115,6 @@ void main()
   float morphLerpValue = 1.0 - clamp(morphConsts.z - eyeDistance * morphConsts.w, 0.0, 1.0);
 
   vertex.xz = morphVertex(vec4(position,1.0), vertex.xz, morphLerpValue);
-  //vertex.xz = morphVertex(vertex, vertex.xz, morphLerpValue);
 
   globalUV = calculateGlobalUV(vertex.xz);
   vertex.y = sampleHeightmap(globalUV, 0) * terrainScale.y + terrainOffset.y; 

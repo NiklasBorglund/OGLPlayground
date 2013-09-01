@@ -304,7 +304,7 @@ public:
 	void SetUniform(const int uniformLocation, const Vector4& uniformValue)const;
 	void SetUniform(const int uniformLocation, const Color& uniformValue)const;
 	void SetUniform(const int uniformLocation, bool transpose, const Matrix4x4& uniformValue)const;
-	void SetUniform(const int uniformLocation, const int& uniformValue)const;
+	void SetUniform(const int uniformLocation, const int uniformValue)const;
 
 	void EnableVertexAttribute(const unsigned int attributeIndex)const;
 	void SetVertexAttribute(const unsigned int attributeIndex, const int size, GraphicsDataType type, bool normalized, int stride,const void* attributePointer)const;

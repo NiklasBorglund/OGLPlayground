@@ -178,14 +178,21 @@ void CDLODSelection::SetStopAtLevel(int stopAtLevel)
 }
 Vector4 CDLODSelection::GetMorphConsts(int level)const
 {
-	float start = _morphStart[level];
-	float end = _morphEnd[level];
+	float start = _morphStart[level -1];
+	float end = _morphEnd[level - 1];
 
 	end = end + (start - end) * 0.01f; //lerp
 
+	/*
 	return Vector4(
 		start, 
 		1.0f / (end- start), 
+		end / (end-start),  
+		1.0f / (end- start));
+		*/
+	return Vector4(
+		start, 
+		end, 
 		end / (end-start),  
 		1.0f / (end- start));
 }
